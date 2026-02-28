@@ -12,11 +12,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, Transaction, TransactionType } from "@/lib/constants";
 import { useAddTransaction, useUpdateTransaction, useCategories, useAddRecurring } from "@/hooks/useData";
+import { useIsMobile } from "@/hooks/use-media-query";
 import { toast } from "sonner";
 
 const schema = z.object({
@@ -131,242 +133,267 @@ const TransactionForm = ({ transaction, onClose, trigger }: TransactionFormProps
   };
 
   const isPending = addTx.isPending || updateTx.isPending || addRecurring.isPending;
+  const isMobile = useIsMobile();
 
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        {trigger ?? (
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Transaction
-          </Button>
-        )}
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="font-display">
-            {isEdit ? "Edit Transaction" : "New Transaction"}
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+  const TriggerButton = trigger ?? (
+    <Button className="gap-2">
+      <Plus className="h-4 w-4" />
+      Add Transaction
+    </Button>
+  );
+
+  const FormContent = (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4", isMobile && "px-4 pb-8")}>
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Type</FormLabel>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={field.value === "expense" ? "default" : "outline"}
+                  className={cn("flex-1", field.value === "expense" && "bg-expense text-expense-foreground hover:bg-expense/90")}
+                  onClick={() => { field.onChange("expense"); form.setValue("category", ""); }}
+                >
+                  Expense
+                </Button>
+                <Button
+                  type="button"
+                  variant={field.value === "income" ? "default" : "outline"}
+                  className={cn("flex-1", field.value === "income" && "bg-income text-income-foreground hover:bg-income/90")}
+                  onClick={() => { field.onChange("income"); form.setValue("category", ""); }}
+                >
+                  Income
+                </Button>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input type="number" step="0.01" min="0.01" placeholder="0.00" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {getCategories(watchedType).map((cat) => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Date</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                      {field.value ? format(field.value, "PPP") : "Pick a date"}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus className="p-3 pointer-events-auto" />
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="note"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Note (optional)</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Add a note..." className="resize-none" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Recurring Toggle - only for new transactions */}
+        {!isEdit && (
+          <>
+            <Separator />
             <FormField
               control={form.control}
-              name="type"
+              name="isRecurring"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant={field.value === "expense" ? "default" : "outline"}
-                      className={cn("flex-1", field.value === "expense" && "bg-expense text-expense-foreground hover:bg-expense/90")}
-                      onClick={() => { field.onChange("expense"); form.setValue("category", ""); }}
-                    >
-                      Expense
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={field.value === "income" ? "default" : "outline"}
-                      className={cn("flex-1", field.value === "income" && "bg-income text-income-foreground hover:bg-income/90")}
-                      onClick={() => { field.onChange("income"); form.setValue("category", ""); }}
-                    >
-                      Income
-                    </Button>
+                <FormItem className="flex items-center justify-between rounded-lg border border-border/50 p-3">
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 text-primary" />
+                    <div>
+                      <FormLabel className="cursor-pointer">Make this recurring</FormLabel>
+                      <p className="text-xs text-muted-foreground">Automatically repeats on a schedule</p>
+                    </div>
                   </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" min="0.01" placeholder="0.00" {...field} />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {getCategories(watchedType).map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                          {field.value ? format(field.value, "PPP") : "Pick a date"}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus className="p-3 pointer-events-auto" />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="note"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Note (optional)</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Add a note..." className="resize-none" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Recurring Toggle - only for new transactions */}
-            {!isEdit && (
-              <>
-                <Separator />
+            {isRecurring && (
+              <div className="space-y-3 pl-2 border-l-2 border-primary/30">
                 <FormField
                   control={form.control}
-                  name="isRecurring"
+                  name="frequency"
                   render={({ field }) => (
-                    <FormItem className="flex items-center justify-between rounded-lg border border-border/50 p-3">
-                      <div className="flex items-center gap-2">
-                        <RefreshCw className="h-4 w-4 text-primary" />
-                        <div>
-                          <FormLabel className="cursor-pointer">Make this recurring</FormLabel>
-                          <p className="text-xs text-muted-foreground">Automatically repeats on a schedule</p>
-                        </div>
-                      </div>
-                      <FormControl>
-                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </FormControl>
+                    <FormItem>
+                      <FormLabel>Frequency</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                        <SelectContent>
+                          <SelectItem value="daily">Daily</SelectItem>
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                          <SelectItem value="monthly">Monthly</SelectItem>
+                          <SelectItem value="yearly">Yearly</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormItem>
                   )}
                 />
 
-                {isRecurring && (
-                  <div className="space-y-3 pl-2 border-l-2 border-primary/30">
-                    <FormField
-                      control={form.control}
-                      name="frequency"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Frequency</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                            <SelectContent>
-                              <SelectItem value="daily">Daily</SelectItem>
-                              <SelectItem value="weekly">Weekly</SelectItem>
-                              <SelectItem value="monthly">Monthly</SelectItem>
-                              <SelectItem value="yearly">Yearly</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      )}
-                    />
+                <FormField
+                  control={form.control}
+                  name="endCondition"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End condition</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                        <SelectContent>
+                          <SelectItem value="never">Never ends</SelectItem>
+                          <SelectItem value="date">End on specific date</SelectItem>
+                          <SelectItem value="occurrences">End after X occurrences</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name="endCondition"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>End condition</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
-                            <SelectContent>
-                              <SelectItem value="never">Never ends</SelectItem>
-                              <SelectItem value="date">End on specific date</SelectItem>
-                              <SelectItem value="occurrences">End after X occurrences</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      )}
-                    />
-
-                    {endCondition === "date" && (
-                      <FormField
-                        control={form.control}
-                        name="endDate"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col">
-                            <FormLabel>End date</FormLabel>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                                    {field.value ? format(field.value, "PPP") : "Pick end date"}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                  </Button>
-                                </FormControl>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(d) => d < new Date()} initialFocus className="p-3 pointer-events-auto" />
-                              </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
-
-                    {endCondition === "occurrences" && (
-                      <FormField
-                        control={form.control}
-                        name="maxOccurrences"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Number of occurrences</FormLabel>
+                {endCondition === "date" && (
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>End date</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
                             <FormControl>
-                              <Input type="number" min="1" placeholder="e.g. 12" {...field} />
+                              <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                                {field.value ? format(field.value, "PPP") : "Pick end date"}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
                             </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(d) => d < new Date()} initialFocus className="p-3 pointer-events-auto" />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
+                  />
                 )}
-              </>
-            )}
 
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Saving..." : isEdit ? "Update" : isRecurring ? "Create Recurring" : "Add Transaction"}
-            </Button>
-          </form>
-        </Form>
+                {endCondition === "occurrences" && (
+                  <FormField
+                    control={form.control}
+                    name="maxOccurrences"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Number of occurrences</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="1" placeholder="e.g. 12" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "Saving..." : isEdit ? "Update" : isRecurring ? "Create Recurring" : "Add Transaction"}
+        </Button>
+      </form>
+    </Form>
+  );
+
+  const titleText = isEdit ? "Edit Transaction" : "New Transaction";
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={handleOpenChange}>
+        <DrawerTrigger asChild>
+          {TriggerButton}
+        </DrawerTrigger>
+        <DrawerContent className="max-h-[90vh]">
+          <DrawerHeader className="text-left">
+            <DrawerTitle className="font-display">{titleText}</DrawerTitle>
+          </DrawerHeader>
+          <div className="overflow-y-auto w-full">
+            {FormContent}
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        {TriggerButton}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-display">{titleText}</DialogTitle>
+        </DialogHeader>
+        {FormContent}
       </DialogContent>
     </Dialog>
   );

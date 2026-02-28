@@ -7,8 +7,9 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { formatCurrency } from "@/lib/formatters";
 import TransactionForm from "@/components/TransactionForm";
 import TransactionItem from "@/components/TransactionItem";
+import { useIsMobile } from "@/hooks/use-media-query";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
+import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ const Dashboard = () => {
   const { data: transactions, isLoading } = useTransactions();
   const { preferences } = usePreferences();
   const budgetStatuses = useBudgetStatuses();
+  const isMobile = useIsMobile();
   const [timeMode, setTimeMode] = useState<"months" | "weeks" | "days">("months");
   const [timeRange, setTimeRange] = useState(6);
 
@@ -112,7 +114,7 @@ const Dashboard = () => {
             <h1 className="font-display text-3xl font-bold text-foreground">Dashboard</h1>
             <p className="text-muted-foreground">Your financial overview</p>
           </div>
-          <TransactionForm />
+          {!isMobile && <TransactionForm />}
         </div>
       </div>
 
@@ -151,42 +153,45 @@ const Dashboard = () => {
         </div>
 
         {/* Charts Section */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="border-border/50 shadow-sm">
+        <div className="grid gap-6 lg:grid-cols-2 min-w-0">
+          <Card className="border-border/50 shadow-sm min-w-0 overflow-hidden">
             <CardHeader>
               <CardTitle className="font-display text-lg font-semibold text-foreground">Expenses by Category</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-hidden">
               {expenseByCategoryData.length === 0 ? (
-                <div className="flex h-[260px] items-center justify-center text-sm text-muted-foreground">
+                <div className="flex h-[220px] items-center justify-center text-sm text-muted-foreground">
                   No expense data yet
                 </div>
               ) : (
-                <ChartContainer config={{}} className="mx-auto aspect-square h-[260px]">
-                  <PieChart>
-                    <Pie
-                      data={expenseByCategoryData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={100}
-                      paddingAngle={2}
-                      dataKey="value"
-                      nameKey="name"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {expenseByCategoryData.map((_, i) => (
-                        <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
+                <ChartContainer config={{}} className="h-[220px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={expenseByCategoryData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={85}
+                        paddingAngle={2}
+                        dataKey="value"
+                        nameKey="name"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        labelLine={false}
+                      >
+                        {expenseByCategoryData.map((_, i) => (
+                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </ChartContainer>
               )}
             </CardContent>
           </Card>
 
-          <Card className="border-border/50 shadow-sm">
+          <Card className="border-border/50 shadow-sm min-w-0 overflow-hidden">
             <CardHeader>
               <CardTitle className="font-display text-lg font-semibold text-foreground">Income vs Expense Trend</CardTitle>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -206,7 +211,7 @@ const Dashboard = () => {
                     <SelectItem value="days">Days</SelectItem>
                   </SelectContent>
                 </Select>
-                <div className="flex flex-1 items-center gap-3">
+                <div className="flex flex-1 items-center gap-3 min-w-0">
                   <span className="text-sm text-muted-foreground whitespace-nowrap">
                     Past {timeRange} {timeMode}
                   </span>
@@ -216,26 +221,28 @@ const Dashboard = () => {
                     min={1}
                     max={15}
                     step={1}
-                    className="flex-1"
+                    className="flex-1 min-w-0"
                   />
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-hidden">
               {trendData.length === 0 ? (
-                <div className="flex h-[260px] items-center justify-center text-sm text-muted-foreground">
+                <div className="flex h-[220px] items-center justify-center text-sm text-muted-foreground">
                   No data yet
                 </div>
               ) : (
-                <ChartContainer config={{}} className="h-[260px] w-full">
-                  <LineChart data={trendData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis dataKey="label" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
-                    <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Line type="monotone" dataKey="income" stroke="hsl(152, 60%, 40%)" strokeWidth={2} dot={{ r: 3 }} name="Income" />
-                    <Line type="monotone" dataKey="expense" stroke="hsl(0, 72%, 51%)" strokeWidth={2} dot={{ r: 3 }} name="Expense" />
-                  </LineChart>
+                <ChartContainer config={{}} className="h-[220px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={trendData}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                      <XAxis dataKey="label" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+                      <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" width={40} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line type="monotone" dataKey="income" stroke="hsl(152, 60%, 40%)" strokeWidth={2} dot={{ r: 3 }} name="Income" />
+                      <Line type="monotone" dataKey="expense" stroke="hsl(0, 72%, 51%)" strokeWidth={2} dot={{ r: 3 }} name="Expense" />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </ChartContainer>
               )}
             </CardContent>

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { format } from "date-fns";
-import { Search, CalendarIcon, Download, TrendingUp, Loader2 } from "lucide-react";
+import { Search, CalendarIcon, Download, TrendingUp, Loader2, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, TransactionType } from "@/lib/co
 import { useTransactionsPaged, useTransactions, useCategories, TransactionFilters } from "@/hooks/useData";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { formatCurrency } from "@/lib/formatters";
+import { useIsMobile } from "@/hooks/use-media-query";
 import TransactionForm from "@/components/TransactionForm";
 import TransactionItem from "@/components/TransactionItem";
 import * as XLSX from "xlsx";
@@ -44,6 +45,8 @@ const Transactions = () => {
   // For the Download Report we fetch all matching records (unbounded)
   // but only when user explicitly clicks — we use the full transactions data (last 12mo) for the export
   const { data: allTransactions } = useTransactions();
+  const isMobile = useIsMobile();
+  const [showFilters, setShowFilters] = useState(false);
 
   const categories = useMemo(() => {
     if (typeFilter === "all") return [];
@@ -117,82 +120,89 @@ const Transactions = () => {
             </div>
           </div>
           <div className="flex gap-2">
+            {isMobile && (
+              <Button variant={showFilters ? "default" : "outline"} size="icon" onClick={() => setShowFilters(!showFilters)}>
+                <Filter className="h-4 w-4" />
+              </Button>
+            )}
             <Button variant="outline" onClick={downloadReport} disabled={!allTransactions?.length}>
-              <Download className="mr-2 h-4 w-4" />
-              Download Report
+              <Download className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Download Report</span>
             </Button>
-            <TransactionForm />
+            {!isMobile && <TransactionForm />}
           </div>
         </div>
 
         {/* Filters */}
-        <Card className="border-border/50 shadow-sm overflow-hidden">
-          <CardContent className="p-[var(--card-padding)]">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search category or note..."
-                  value={search}
-                  onChange={(e) => { setSearch(e.target.value); resetPage(); }}
-                  className="pl-9"
-                />
-              </div>
+        {(!isMobile || showFilters) && (
+          <Card className="border-border/50 shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            <CardContent className="p-[var(--card-padding)]">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search category or note..."
+                    value={search}
+                    onChange={(e) => { setSearch(e.target.value); resetPage(); }}
+                    className="pl-9"
+                  />
+                </div>
 
-              <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v as "all" | TransactionType); setCategoryFilter("all"); resetPage(); }}>
-                <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="income">Income</SelectItem>
-                  <SelectItem value="expense">Expense</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {typeFilter !== "all" && (
-                <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); resetPage(); }}>
-                  <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+                <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v as "all" | TransactionType); setCategoryFilter("all"); resetPage(); }}>
+                  <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="income">Income</SelectItem>
+                    <SelectItem value="expense">Expense</SelectItem>
                   </SelectContent>
                 </Select>
-              )}
 
-              <div className="flex gap-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className={cn("flex-1 justify-start text-left font-normal text-sm", !dateFrom && "text-muted-foreground")}>
-                      <CalendarIcon className="mr-1 h-3.5 w-3.5" />
-                      {dateFrom ? format(dateFrom, "MM/dd") : "From"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={dateFrom} onSelect={(d) => { setDateFrom(d); resetPage(); }} className="p-3 pointer-events-auto" />
-                  </PopoverContent>
-                </Popover>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className={cn("flex-1 justify-start text-left font-normal text-sm", !dateTo && "text-muted-foreground")}>
-                      <CalendarIcon className="mr-1 h-3.5 w-3.5" />
-                      {dateTo ? format(dateTo, "MM/dd") : "To"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={dateTo} onSelect={(d) => { setDateTo(d); resetPage(); }} className="p-3 pointer-events-auto" />
-                  </PopoverContent>
-                </Popover>
+                {typeFilter !== "all" && (
+                  <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); resetPage(); }}>
+                    <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {categories.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                <div className="flex gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className={cn("flex-1 justify-start text-left font-normal text-sm", !dateFrom && "text-muted-foreground")}>
+                        <CalendarIcon className="mr-1 h-3.5 w-3.5" />
+                        {dateFrom ? format(dateFrom, "MM/dd") : "From"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar mode="single" selected={dateFrom} onSelect={(d) => { setDateFrom(d); resetPage(); }} className="p-3 pointer-events-auto" />
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className={cn("flex-1 justify-start text-left font-normal text-sm", !dateTo && "text-muted-foreground")}>
+                        <CalendarIcon className="mr-1 h-3.5 w-3.5" />
+                        {dateTo ? format(dateTo, "MM/dd") : "To"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar mode="single" selected={dateTo} onSelect={(d) => { setDateTo(d); resetPage(); }} className="p-3 pointer-events-auto" />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
-            </div>
 
-            {hasFilters && (
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="mt-3 text-muted-foreground">
-                Clear filters
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+              {hasFilters && (
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="mt-3 text-muted-foreground">
+                  Clear filters
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Scrollable List */}
