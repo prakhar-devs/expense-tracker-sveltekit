@@ -32,42 +32,52 @@
 </script>
 
 <div
-  class="group flex items-center gap-4 rounded-lg border border-border/50 bg-card p-[var(--card-padding)] transition-all hover:shadow-md animate-fade-in"
+  class="group relative flex w-full min-w-0 items-center justify-between gap-3 sm:gap-4 rounded-lg border border-border/50 bg-card p-3 sm:p-[var(--card-padding)] transition-all hover:shadow-md animate-fade-in"
 >
-  <div
-    class={cn(
-      "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors group-hover:scale-105",
-      isIncome
-        ? "bg-income-muted text-income"
-        : "bg-expense-muted text-expense",
-    )}
-  >
-    {#if isIncome}
-      <ArrowDownLeft class="h-5 w-5" />
-    {:else}
-      <ArrowUpRight class="h-5 w-5" />
-    {/if}
-  </div>
-
-  <div class="min-w-0 flex-1">
-    <div class="flex items-center gap-1.5 min-w-0">
-      <p class="truncate font-medium text-foreground">{transaction.category}</p>
-      {#if transaction.recurring_id}
-        <span
-          class="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary/70"
-          title="Created by recurring rule">🔁</span
-        >
+  <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+    <div
+      class={cn(
+        "flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg transition-colors group-hover:scale-105",
+        isIncome
+          ? "bg-income-muted text-income"
+          : "bg-expense-muted text-expense",
+      )}
+    >
+      {#if isIncome}
+        <ArrowDownLeft class="h-4 w-4 sm:h-5 sm:w-5" />
+      {:else}
+        <ArrowUpRight class="h-4 w-4 sm:h-5 sm:w-5" />
       {/if}
     </div>
-    <p class="truncate text-sm text-muted-foreground">
-      {transaction.note || formatDate(transaction.date)}
-    </p>
+
+    <div class="flex flex-col min-w-0 flex-1">
+      <div class="flex items-center gap-1.5 min-w-0">
+        <p
+          class="truncate font-medium text-sm sm:text-base text-foreground leading-tight"
+        >
+          {transaction.category}
+        </p>
+        {#if transaction.recurring_id}
+          <span
+            class="shrink-0 rounded bg-primary/10 px-1 py-0.5 text-[10px] sm:text-xs font-medium text-primary/70 leading-none"
+            title="Created by recurring rule">🔁</span
+          >
+        {/if}
+      </div>
+      {#if transaction.note}
+        <p
+          class="truncate text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 font-medium"
+        >
+          {transaction.note}
+        </p>
+      {/if}
+    </div>
   </div>
 
-  <div class="text-right">
+  <div class="flex flex-col items-end shrink-0 pl-1">
     <p
       class={cn(
-        "font-display font-semibold",
+        "font-display font-semibold text-sm sm:text-base whitespace-nowrap",
         isIncome ? "text-income" : "text-expense",
       )}
     >
@@ -76,21 +86,23 @@
         $preferencesStore,
       )}
     </p>
-    <p class="text-xs text-muted-foreground">{formatDate(transaction.date)}</p>
+    <p class="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">
+      {formatDate(transaction.date)}
+    </p>
   </div>
 
   {#if showActions}
     <div
-      class="flex shrink-0 gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity"
+      class="flex flex-col sm:flex-row shrink-0 gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity ml-1 sm:ml-0"
     >
       <TransactionForm bind:open={isFormOpen} {transaction}>
         <Button
           variant="ghost"
           size="icon"
-          class="h-8 w-8"
+          class="h-6 w-6 sm:h-8 sm:w-8 p-1"
           onclick={() => (isFormOpen = true)}
         >
-          <Pencil class="h-4 w-4" />
+          <Pencil class="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
       </TransactionForm>
 
@@ -101,9 +113,9 @@
               {...props}
               variant="ghost"
               size="icon"
-              class="h-8 w-8 text-destructive hover:text-destructive"
+              class="h-6 w-6 sm:h-8 sm:w-8 p-1 text-destructive hover:text-destructive"
             >
-              <Trash2 class="h-4 w-4" />
+              <Trash2 class="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           {/snippet}
         </AlertDialog.Trigger>
