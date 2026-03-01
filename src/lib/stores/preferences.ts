@@ -1,6 +1,8 @@
 import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { UserPreferences } from '$lib/constants';
+import { auth } from '$lib/stores/auth';
+import { supabase } from '$lib/supabaseClient';
 
 const DEFAULT_PREFERENCES: UserPreferences = {
     theme: 'system',
@@ -59,15 +61,25 @@ function createPreferencesStore() {
         localStorage.setItem('user-preferences', JSON.stringify(prefs));
     }
 
-    function setPreferences(prefs: UserPreferences) {
-        set(prefs);
-        applyToDOM(prefs);
+    async function syncToDatabase(prefs: UserPreferences) {
+        if (!browser) return;
+        const user = get(auth).user;
+        if (!user) return;
+        // Fire and forget
+        supabase.from('profiles').update({ preferences: prefs }).eq('user_id', user.id).then();
     }
 
-    function mergePreferences(patch: Partial<UserPreferences>) {
+    function setPreferences(prefs: UserPreferences, sync = true) {
+        set(prefs);
+        applyToDOM(prefs);
+        if (sync) syncToDatabase(prefs);
+    }
+
+    function mergePreferences(patch: Partial<UserPreferences>, sync = true) {
         update(current => {
             const next = { ...current, ...patch };
             applyToDOM(next);
+            if (sync) syncToDatabase(next);
             return next;
         });
     }

@@ -2,6 +2,7 @@
   let { children } = $props();
   import "../app.css";
   import { onMount } from "svelte";
+  import { supabase } from "$lib/supabaseClient";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
@@ -36,7 +37,9 @@
     return () => auth.destroy();
   });
 
-  // Redirect logic
+  // Redirect & Sync Preferences logic
+  let loadedPrefsUserId = $state<string | null>(null);
+
   $effect(() => {
     if (!$auth.loading) {
       const isAuthPage = $page.url.pathname === "/auth";
@@ -44,6 +47,21 @@
         goto("/auth");
       } else if ($auth.user && isAuthPage) {
         goto("/");
+      }
+
+      if ($auth.user && loadedPrefsUserId !== $auth.user.id) {
+        loadedPrefsUserId = $auth.user.id;
+        supabase
+          .from("profiles")
+          .select("preferences")
+          .eq("user_id", $auth.user.id)
+          .single()
+          .then(({ data, error }) => {
+            if (!error && data?.preferences) {
+              // Apply database preferences locally (false = do not echo back to DB)
+              preferencesStore.mergePreferences(data.preferences, false);
+            }
+          });
       }
     }
   });
