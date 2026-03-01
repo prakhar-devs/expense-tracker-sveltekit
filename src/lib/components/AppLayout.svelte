@@ -64,7 +64,7 @@
 
   async function handleSignOut() {
     await auth.signOut();
-    goto("/auth");
+    window.location.href = "/auth";
   }
 
   // Notification count logic

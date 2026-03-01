@@ -79,7 +79,7 @@
 
     async function handleSignOut() {
         await auth.signOut();
-        goto("/auth");
+        window.location.href = "/auth";
     }
 
     let customCategories = $derived(categoriesQuery.data || []);

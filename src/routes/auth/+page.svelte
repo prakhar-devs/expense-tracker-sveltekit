@@ -26,7 +26,8 @@
                 });
                 if (error) throw error;
                 toast.success("Welcome back!");
-                // $layout.svelte handles the redirect reactively once auth state updates
+                // Force a hard reload to ensure all app state and layouts correctly pick up the session
+                window.location.href = "/";
             } else {
                 if (password.length < 6) {
                     toast.error("Password must be at least 6 characters");
