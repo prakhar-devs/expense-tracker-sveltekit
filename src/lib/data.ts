@@ -116,6 +116,36 @@ export function createTransactionsPagedQuery(
     });
 }
 
+export async function fetchFilteredTransactions(userId: string, filters: TransactionFilters): Promise<Transaction[]> {
+    let dataQ = supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', userId);
+
+    if (filters.amountOrder) {
+        dataQ = dataQ.order('amount', { ascending: filters.amountOrder === 'asc' });
+    } else {
+        dataQ = dataQ.order('date', { ascending: false }).order('created_at', { ascending: false });
+    }
+
+    if (filters.type && filters.type !== 'all') {
+        dataQ = dataQ.eq('type', filters.type);
+    }
+    if (filters.category && filters.category !== 'all') {
+        dataQ = dataQ.eq('category', filters.category);
+    }
+    if (filters.dateFrom) { dataQ = dataQ.gte('date', filters.dateFrom); }
+    if (filters.dateTo) { dataQ = dataQ.lte('date', filters.dateTo); }
+    if (filters.search) {
+        const term = `%${filters.search}%`;
+        dataQ = dataQ.or(`category.ilike.${term},note.ilike.${term}`);
+    }
+
+    const { data, error } = await dataQ;
+    if (error) throw error;
+    return (data ?? []) as Transaction[];
+}
+
 export function createAddTransactionMutation() {
     const qc = useQueryClient();
     const userId = getUserId();

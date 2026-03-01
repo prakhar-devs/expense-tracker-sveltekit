@@ -10,10 +10,14 @@
         Calendar as CalendarIcon,
         RotateCcw,
         Filter,
+        Download,
+        FileSpreadsheet,
+        FileText,
     } from "lucide-svelte";
     import {
         createTransactionsPagedQuery,
         createCategoriesQuery,
+        fetchFilteredTransactions,
     } from "$lib/data";
     import * as Card from "$lib/components/ui/card";
     import * as Select from "$lib/components/ui/select";
@@ -24,6 +28,9 @@
     import { cn } from "$lib/utils";
     import { format } from "date-fns";
     import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
+    import { toast } from "svelte-sonner";
+    import jsPDF from "jspdf";
+    import autoTable from "jspdf-autotable";
 
     let { data } = $props();
 
@@ -89,6 +96,136 @@
             page += 1; // Increment page to load more
         }
     }
+
+    async function handleDownloadCSV() {
+        if (!$auth.user?.id) return;
+
+        try {
+            toast.loading("Preparing CSV report...");
+            const filters = {
+                search: searchTerm || undefined,
+                type: typeFilter === "all" ? undefined : typeFilter,
+                dateFrom: dateFrom?.toString(),
+                dateTo: dateTo?.toString(),
+                amountOrder: amountOrder === "date" ? undefined : amountOrder,
+            };
+
+            const allTransactions = await fetchFilteredTransactions(
+                $auth.user.id,
+                filters,
+            );
+
+            if (allTransactions.length === 0) {
+                toast.dismiss();
+                toast.error("No transactions to download");
+                return;
+            }
+
+            const headers = ["Date", "Category", "Note", "Type", "Amount"];
+            const rows = allTransactions.map((t) => [
+                format(new Date(t.date), "yyyy-MM-dd"),
+                t.category,
+                t.note || "",
+                t.type,
+                t.amount.toFixed(2),
+            ]);
+
+            const csvContent = [
+                headers.join(","),
+                ...rows.map((row) =>
+                    row
+                        .map(
+                            (cell) =>
+                                `"${(cell || "").toString().replace(/"/g, '""')}"`,
+                        )
+                        .join(","),
+                ),
+            ].join("\n");
+
+            const blob = new Blob([csvContent], {
+                type: "text/csv;charset=utf-8;",
+            });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute(
+                "download",
+                `spendwise_report_${format(new Date(), "yyyy-MM-dd")}.csv`,
+            );
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            toast.dismiss();
+            toast.success("CSV report downloaded");
+        } catch (error) {
+            console.error(error);
+            toast.dismiss();
+            toast.error("Failed to download CSV");
+        }
+    }
+
+    async function handleDownloadPDF() {
+        if (!$auth.user?.id) return;
+
+        try {
+            toast.loading("Preparing PDF report...");
+            const filters = {
+                search: searchTerm || undefined,
+                type: typeFilter === "all" ? undefined : typeFilter,
+                dateFrom: dateFrom?.toString(),
+                dateTo: dateTo?.toString(),
+                amountOrder: amountOrder === "date" ? undefined : amountOrder,
+            };
+
+            const allTransactions = await fetchFilteredTransactions(
+                $auth.user.id,
+                filters,
+            );
+
+            if (allTransactions.length === 0) {
+                toast.dismiss();
+                toast.error("No transactions to download");
+                return;
+            }
+
+            const doc = new jsPDF();
+            doc.setFontSize(22);
+            doc.setTextColor(30);
+            doc.text("SpendWise Transaction Report", 14, 20);
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(`Generated on: ${format(new Date(), "PPPP")}`, 14, 28);
+
+            const tableData = allTransactions.map((t) => [
+                format(new Date(t.date), "MMM d, yyyy"),
+                t.category,
+                t.note || "-",
+                t.type.charAt(0).toUpperCase() + t.type.slice(1),
+                `$${t.amount.toFixed(2)}`,
+            ]);
+
+            autoTable(doc, {
+                startY: 40,
+                head: [["Date", "Category", "Note", "Type", "Amount"]],
+                body: tableData,
+                headStyles: { fillColor: [79, 70, 229] }, // Indigo-600
+                alternateRowStyles: { fillColor: [249, 250, 251] }, // Gray-50
+                margin: { top: 40 },
+                styles: { fontSize: 10, cellPadding: 4 },
+            });
+
+            doc.save(
+                `spendwise_report_${format(new Date(), "yyyy-MM-dd")}.pdf`,
+            );
+            toast.dismiss();
+            toast.success("PDF report downloaded");
+        } catch (error) {
+            console.error(error);
+            toast.dismiss();
+            toast.error("Failed to download PDF");
+        }
+    }
 </script>
 
 <AppLayout>
@@ -121,6 +258,48 @@
                     >
                         <Filter class="h-5 w-5" />
                     </Button>
+
+                    <Popover.Root>
+                        <Popover.Trigger>
+                            <Button
+                                variant="outline"
+                                class="h-10 w-10 sm:w-auto px-0 sm:px-4 gap-2 shadow-sm shrink-0 border-border/50 bg-muted/5 hover:bg-muted/10 transition-colors"
+                            >
+                                <Download class="h-4 w-4" />
+                                <span class="hidden sm:inline"
+                                    >Download Report</span
+                                >
+                            </Button>
+                        </Popover.Trigger>
+                        <Popover.Content class="w-48 p-2" align="end">
+                            <div class="space-y-1">
+                                <button
+                                    class="flex items-center gap-3 w-full p-2.5 text-sm font-medium rounded-lg hover:bg-muted/50 transition-colors text-left"
+                                    onclick={handleDownloadCSV}
+                                >
+                                    <div
+                                        class="p-1.5 bg-blue-500/10 rounded-md"
+                                    >
+                                        <FileSpreadsheet
+                                            class="h-4 w-4 text-blue-500"
+                                        />
+                                    </div>
+                                    CSV Format
+                                </button>
+                                <button
+                                    class="flex items-center gap-3 w-full p-2.5 text-sm font-medium rounded-lg hover:bg-muted/50 transition-colors text-left"
+                                    onclick={handleDownloadPDF}
+                                >
+                                    <div class="p-1.5 bg-red-500/10 rounded-md">
+                                        <FileText
+                                            class="h-4 w-4 text-red-500"
+                                        />
+                                    </div>
+                                    PDF Document
+                                </button>
+                            </div>
+                        </Popover.Content>
+                    </Popover.Root>
 
                     <TransactionForm bind:open={txFormOpen}>
                         <Button
