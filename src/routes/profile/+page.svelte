@@ -99,7 +99,7 @@
         </div>
 
         <div
-            class="w-full max-w-7xl mx-auto pb-10 px-4 sm:px-0 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start"
+            class="w-full max-w-7xl mx-auto pb-10 sm:px-0 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start"
         >
             <!-- Account Info -->
             <Card.Root
