@@ -10,7 +10,7 @@ return {
 	assets: new Set(["apple-touch-icon-180x180.png","favicon.ico","favicon.svg","maskable-icon-512x512.png","placeholder.svg","pwa-192x192.png","pwa-512x512.png","pwa-64x64.png","robots.txt"]),
 	mimeTypes: {".png":"image/png",".svg":"image/svg+xml",".txt":"text/plain"},
 	_: {
-		client: {start:"_app/immutable/entry/start.CopaP-bM.js",app:"_app/immutable/entry/app.5FBN7KhH.js",imports:["_app/immutable/entry/start.CopaP-bM.js","_app/immutable/chunks/-Te3Ps78.js","_app/immutable/chunks/DJ2lXJsJ.js","_app/immutable/entry/app.5FBN7KhH.js","_app/immutable/chunks/DJ2lXJsJ.js","_app/immutable/chunks/BzcZzo3g.js","_app/immutable/chunks/DA2NdXXF.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.hLj3n4ZA.js",app:"_app/immutable/entry/app.CObE72dg.js",imports:["_app/immutable/entry/start.hLj3n4ZA.js","_app/immutable/chunks/I4bO1U6J.js","_app/immutable/chunks/Cty6JsUq.js","_app/immutable/entry/app.CObE72dg.js","_app/immutable/chunks/Cty6JsUq.js","_app/immutable/chunks/BjWX12uN.js","_app/immutable/chunks/D15QtD5j.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('./nodes/0.js')),
 			__memo(() => import('./nodes/1.js')),

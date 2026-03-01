@@ -1,4 +1,4 @@
-import { c as store_get, u as unsubscribe_stores, d as attr_class, m as stringify, k as escape_html, a as attr, e as ensure_array_like, n as derived } from "../../chunks/index2.js";
+import { c as store_get, u as unsubscribe_stores, d as attr_class, n as stringify, k as escape_html, a as attr, e as ensure_array_like, m as derived } from "../../chunks/index2.js";
 import { A as AppLayout, T as TransactionForm } from "../../chunks/AppLayout.js";
 import { C as Card, a as Card_content, B as Button } from "../../chunks/card-content.js";
 import { C as Card_description } from "../../chunks/card-description.js";
@@ -11,6 +11,12 @@ import { c as createTransactionsQuery, a as createBudgetsQuery } from "../../chu
 import { l as auth } from "../../chunks/auth.js";
 import "chart.js/auto";
 import { subDays, format, parseISO, isSameDay } from "date-fns";
+import "@sveltejs/kit/internal";
+import "../../chunks/exports.js";
+import "../../chunks/utils.js";
+import "@sveltejs/kit/internal/server";
+import "../../chunks/root.js";
+import "../../chunks/utils2.js";
 import { P as Plus } from "../../chunks/plus.js";
 function Chart_1($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
@@ -25,6 +31,7 @@ function _page($$renderer, $$props) {
     var $$store_subs;
     let { data } = $$props;
     let txFormOpen = false;
+    let initialType = "expense";
     let timeframe = "day";
     let chartUnits = 15;
     const transactionsQuery = createTransactionsQuery(() => store_get($$store_subs ??= {}, "$auth", auth).user?.id, data.preloaded?.transactions);
@@ -120,6 +127,7 @@ function _page($$renderer, $$props) {
         children: ($$renderer4) => {
           $$renderer4.push(`<div class="flex flex-col gap-6 animate-fade-in"><div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h1 class="font-display text-3xl font-bold text-foreground">Dashboard</h1> <p class="text-muted-foreground mt-1">Overview of your recent financial activity</p></div> `);
           TransactionForm($$renderer4, {
+            initialType,
             get open() {
               return txFormOpen;
             },
@@ -129,7 +137,10 @@ function _page($$renderer, $$props) {
             },
             children: ($$renderer5) => {
               Button($$renderer5, {
-                onclick: () => txFormOpen = true,
+                onclick: () => {
+                  initialType = "expense";
+                  txFormOpen = true;
+                },
                 class: "hidden sm:flex gap-2",
                 children: ($$renderer6) => {
                   Plus($$renderer6, { class: "h-4 w-4" });

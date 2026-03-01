@@ -1,13 +1,14 @@
-import { f as fallback, b as bind_props, a as attr, e as ensure_array_like, s as sanitize_props, c as store_get, d as attr_class, g as clsx, h as attr_style, i as spread_props, j as slot, k as escape_html, u as unsubscribe_stores, r as rest_props, l as attributes } from "../../chunks/index2.js";
+import { f as fallback, b as bind_props, a as attr, e as ensure_array_like, s as sanitize_props, c as store_get, d as attr_class, g as clsx, h as attr_style, i as spread_props, j as slot, k as escape_html, u as unsubscribe_stores, r as rest_props, l as attributes, m as derived } from "../../chunks/index2.js";
 import "@sveltejs/kit/internal";
 import "../../chunks/exports.js";
 import "../../chunks/utils.js";
 import "clsx";
 import "@sveltejs/kit/internal/server";
 import "../../chunks/root.js";
-import "../../chunks/state.svelte.js";
+import { I as Icon$1, c as cn$1 } from "../../chunks/utils2.js";
+import { p as page } from "../../chunks/stores.js";
 import { e as ensureQueryFn, a as addToStart, b as addToEnd, c as addConsumeAwareSignal, S as Subscribable, M as Mutation, n as notifyManager, m as matchMutation, d as noop, h as hashQueryKeyByOptions, Q as Query, f as matchQuery, g as focusManager, o as onlineManager, r as resolveStaleTime, i as functionalUpdate, j as hashKey, p as partialMatchKey, s as skipToken, k as setQueryClientContext, l as auth } from "../../chunks/auth.js";
-import { o as onDestroy } from "../../chunks/preferences.js";
+import { o as onDestroy, p as preferencesStore } from "../../chunks/preferences.js";
 import { t as toastState, c as cn, u as useEffect } from "../../chunks/Toaster.svelte_svelte_type_style_lang.js";
 function infiniteQueryBehavior(pages) {
   return {
@@ -47,11 +48,11 @@ function infiniteQueryBehavior(pages) {
             return queryFnContext2;
           };
           const queryFnContext = createQueryFnContext();
-          const page = await queryFn(queryFnContext);
+          const page2 = await queryFn(queryFnContext);
           const { maxPages } = context.options;
           const addTo = previous ? addToStart : addToEnd;
           return {
-            pages: addTo(data.pages, page, maxPages),
+            pages: addTo(data.pages, page2, maxPages),
             pageParams: addTo(data.pageParams, param, maxPages)
           };
         };
@@ -1152,30 +1153,260 @@ function Toaster($$renderer, $$props) {
     });
   });
 }
+function Delete($$renderer, $$props) {
+  const $$sanitized_props = sanitize_props($$props);
+  /**
+   * @license lucide-svelte v0.575.0 - ISC
+   *
+   * ISC License
+   *
+   * Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2026 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2026.
+   *
+   * Permission to use, copy, modify, and/or distribute this software for any
+   * purpose with or without fee is hereby granted, provided that the above
+   * copyright notice and this permission notice appear in all copies.
+   *
+   * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+   * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+   * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+   * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+   * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+   * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+   * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   *
+   * ---
+   *
+   * The MIT License (MIT) (for portions derived from Feather)
+   *
+   * Copyright (c) 2013-2026 Cole Bemis
+   *
+   * Permission is hereby granted, free of charge, to any person obtaining a copy
+   * of this software and associated documentation files (the "Software"), to deal
+   * in the Software without restriction, including without limitation the rights
+   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   * copies of the Software, and to permit persons to whom the Software is
+   * furnished to do so, subject to the following conditions:
+   *
+   * The above copyright notice and this permission notice shall be included in all
+   * copies or substantial portions of the Software.
+   *
+   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   * SOFTWARE.
+   *
+   */
+  const iconNode = [
+    [
+      "path",
+      {
+        "d": "M10 5a2 2 0 0 0-1.344.519l-6.328 5.74a1 1 0 0 0 0 1.481l6.328 5.741A2 2 0 0 0 10 19h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"
+      }
+    ],
+    ["path", { "d": "m12 9 6 6" }],
+    ["path", { "d": "m18 9-6 6" }]
+  ];
+  Icon$1($$renderer, spread_props([
+    { name: "delete" },
+    $$sanitized_props,
+    {
+      /**
+       * @component @name Delete
+       * @description Lucide SVG icon component, renders SVG Element with children.
+       *
+       * @preview ![img](data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogIHdpZHRoPSIyNCIKICBoZWlnaHQ9IjI0IgogIHZpZXdCb3g9IjAgMCAyNCAyNCIKICBmaWxsPSJub25lIgogIHN0cm9rZT0iIzAwMCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6ICNmZmY7IGJvcmRlci1yYWRpdXM6IDJweCIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cGF0aCBkPSJNMTAgNWEyIDIgMCAwIDAtMS4zNDQuNTE5bC02LjMyOCA1Ljc0YTEgMSAwIDAgMCAwIDEuNDgxbDYuMzI4IDUuNzQxQTIgMiAwIDAgMCAxMCAxOWgxMGEyIDIgMCAwIDAgMi0yVjdhMiAyIDAgMCAwLTItMnoiIC8+CiAgPHBhdGggZD0ibTEyIDkgNiA2IiAvPgogIDxwYXRoIGQ9Im0xOCA5LTYgNiIgLz4KPC9zdmc+Cg==) - https://lucide.dev/icons/delete
+       * @see https://lucide.dev/guide/packages/lucide-svelte - Documentation
+       *
+       * @param {Object} props - Lucide icons props and any valid SVG attribute
+       * @returns {FunctionalComponent} Svelte component
+       *
+       */
+      iconNode,
+      children: ($$renderer2) => {
+        $$renderer2.push(`<!--[-->`);
+        slot($$renderer2, $$props, "default", {}, null);
+        $$renderer2.push(`<!--]-->`);
+      },
+      $$slots: { default: true }
+    }
+  ]));
+}
+function Lock($$renderer, $$props) {
+  const $$sanitized_props = sanitize_props($$props);
+  /**
+   * @license lucide-svelte v0.575.0 - ISC
+   *
+   * ISC License
+   *
+   * Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2026 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2026.
+   *
+   * Permission to use, copy, modify, and/or distribute this software for any
+   * purpose with or without fee is hereby granted, provided that the above
+   * copyright notice and this permission notice appear in all copies.
+   *
+   * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+   * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+   * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+   * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+   * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+   * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+   * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   *
+   * ---
+   *
+   * The MIT License (MIT) (for portions derived from Feather)
+   *
+   * Copyright (c) 2013-2026 Cole Bemis
+   *
+   * Permission is hereby granted, free of charge, to any person obtaining a copy
+   * of this software and associated documentation files (the "Software"), to deal
+   * in the Software without restriction, including without limitation the rights
+   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   * copies of the Software, and to permit persons to whom the Software is
+   * furnished to do so, subject to the following conditions:
+   *
+   * The above copyright notice and this permission notice shall be included in all
+   * copies or substantial portions of the Software.
+   *
+   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   * SOFTWARE.
+   *
+   */
+  const iconNode = [
+    [
+      "rect",
+      {
+        "width": "18",
+        "height": "11",
+        "x": "3",
+        "y": "11",
+        "rx": "2",
+        "ry": "2"
+      }
+    ],
+    ["path", { "d": "M7 11V7a5 5 0 0 1 10 0v4" }]
+  ];
+  Icon$1($$renderer, spread_props([
+    { name: "lock" },
+    $$sanitized_props,
+    {
+      /**
+       * @component @name Lock
+       * @description Lucide SVG icon component, renders SVG Element with children.
+       *
+       * @preview ![img](data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogIHdpZHRoPSIyNCIKICBoZWlnaHQ9IjI0IgogIHZpZXdCb3g9IjAgMCAyNCAyNCIKICBmaWxsPSJub25lIgogIHN0cm9rZT0iIzAwMCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6ICNmZmY7IGJvcmRlci1yYWRpdXM6IDJweCIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTEiIHg9IjMiIHk9IjExIiByeD0iMiIgcnk9IjIiIC8+CiAgPHBhdGggZD0iTTcgMTFWN2E1IDUgMCAwIDEgMTAgMHY0IiAvPgo8L3N2Zz4K) - https://lucide.dev/icons/lock
+       * @see https://lucide.dev/guide/packages/lucide-svelte - Documentation
+       *
+       * @param {Object} props - Lucide icons props and any valid SVG attribute
+       * @returns {FunctionalComponent} Svelte component
+       *
+       */
+      iconNode,
+      children: ($$renderer2) => {
+        $$renderer2.push(`<!--[-->`);
+        slot($$renderer2, $$props, "default", {}, null);
+        $$renderer2.push(`<!--]-->`);
+      },
+      $$slots: { default: true }
+    }
+  ]));
+}
+function AppLockScreen($$renderer, $$props) {
+  $$renderer.component(($$renderer2) => {
+    var $$store_subs;
+    let { unlocked = false } = $$props;
+    let pin = "";
+    let error = false;
+    store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).appLockPin;
+    store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).biometricsEnabled;
+    $$renderer2.push(`<div class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/95 backdrop-blur-md svelte-1t7cssc"><div class="flex flex-col items-center max-w-sm w-full px-6 text-center svelte-1t7cssc"><div class="h-16 w-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-6 svelte-1t7cssc">`);
+    Lock($$renderer2, { class: "h-8 w-8" });
+    $$renderer2.push(`<!----></div> <h1 class="font-display text-2xl font-bold mb-2 svelte-1t7cssc">App Locked</h1> <p class="text-sm text-muted-foreground mb-8 svelte-1t7cssc">Enter your 4-digit PIN to access SpendWise</p> <div${attr_class(clsx(cn$1("flex gap-4 mb-10 transition-transform", error)), "svelte-1t7cssc")}><!--[-->`);
+    const each_array = ensure_array_like(Array(4));
+    for (let i = 0, $$length = each_array.length; i < $$length; i++) {
+      each_array[i];
+      $$renderer2.push(`<div${attr_class(
+        clsx(cn$1(
+          "w-4 h-4 rounded-full border-2 transition-all duration-200",
+          pin.length > i ? "bg-primary border-primary" : "border-muted-foreground/30 bg-transparent",
+          error
+        )),
+        "svelte-1t7cssc"
+      )}></div>`);
+    }
+    $$renderer2.push(`<!--]--></div> <div class="grid grid-cols-3 gap-4 md:gap-6 mb-8 w-full max-w-[280px] svelte-1t7cssc"><!--[-->`);
+    const each_array_1 = ensure_array_like([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    for (let $$index_1 = 0, $$length = each_array_1.length; $$index_1 < $$length; $$index_1++) {
+      let num = each_array_1[$$index_1];
+      $$renderer2.push(`<button class="h-16 rounded-full text-2xl font-medium bg-muted/30 hover:bg-muted active:bg-muted/80 transition-colors svelte-1t7cssc">${escape_html(num)}</button>`);
+    }
+    $$renderer2.push(`<!--]--> <div class="flex items-center justify-center svelte-1t7cssc">`);
+    {
+      $$renderer2.push("<!--[!-->");
+    }
+    $$renderer2.push(`<!--]--></div> <button class="h-16 rounded-full text-2xl font-medium bg-muted/30 hover:bg-muted active:bg-muted/80 transition-colors svelte-1t7cssc">0</button> <button class="h-16 flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted/50 transition-colors svelte-1t7cssc">`);
+    Delete($$renderer2, { class: "h-6 w-6" });
+    $$renderer2.push(`<!----></button></div></div></div>`);
+    if ($$store_subs) unsubscribe_stores($$store_subs);
+    bind_props($$props, { unlocked });
+  });
+}
 function _layout($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     var $$store_subs;
     let { children } = $$props;
     const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 3e4, retry: 1 } } });
-    QueryClientProvider($$renderer2, {
-      client: (
-        // Redirect logic
-        queryClient
-      ),
-      children: ($$renderer3) => {
-        Toaster($$renderer3, { richColors: true, position: "top-right" });
-        $$renderer3.push(`<!----> `);
-        if (store_get($$store_subs ??= {}, "$auth", auth).loading) {
-          $$renderer3.push("<!--[-->");
-          $$renderer3.push(`<div class="h-screen w-screen flex flex-col items-center justify-center bg-background gap-4"><div class="w-8 h-8 rounded-full border-4 border-primary border-r-transparent animate-spin"></div> <p class="text-sm text-muted-foreground animate-pulse">Loading workspace...</p></div>`);
-        } else {
-          $$renderer3.push("<!--[!-->");
-          children($$renderer3);
-          $$renderer3.push(`<!---->`);
+    let appUnlocked = false;
+    let requiresLock = derived(() => store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).appLockEnabled && store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).appLockPin && store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).appLockPin.length === 4 && store_get($$store_subs ??= {}, "$auth", auth).user && store_get($$store_subs ??= {}, "$page", page).url.pathname !== "/auth" && !appUnlocked);
+    let $$settled = true;
+    let $$inner_renderer;
+    function $$render_inner($$renderer3) {
+      QueryClientProvider($$renderer3, {
+        client: queryClient,
+        children: ($$renderer4) => {
+          Toaster($$renderer4, { richColors: true, position: "top-right" });
+          $$renderer4.push(`<!----> `);
+          if (requiresLock()) {
+            $$renderer4.push("<!--[-->");
+            AppLockScreen($$renderer4, {
+              get unlocked() {
+                return appUnlocked;
+              },
+              set unlocked($$value) {
+                appUnlocked = $$value;
+                $$settled = false;
+              }
+            });
+          } else {
+            $$renderer4.push("<!--[!-->");
+          }
+          $$renderer4.push(`<!--]--> `);
+          if (store_get($$store_subs ??= {}, "$auth", auth).loading) {
+            $$renderer4.push("<!--[-->");
+            $$renderer4.push(`<div class="h-screen w-screen flex flex-col items-center justify-center bg-background gap-4"><div class="w-8 h-8 rounded-full border-4 border-primary border-r-transparent animate-spin"></div> <p class="text-sm text-muted-foreground animate-pulse">Loading workspace...</p></div>`);
+          } else {
+            $$renderer4.push("<!--[!-->");
+            children($$renderer4);
+            $$renderer4.push(`<!---->`);
+          }
+          $$renderer4.push(`<!--]-->`);
         }
-        $$renderer3.push(`<!--]-->`);
-      }
-    });
+      });
+    }
+    do {
+      $$settled = true;
+      $$inner_renderer = $$renderer2.copy();
+      $$render_inner($$inner_renderer);
+    } while (!$$settled);
+    $$renderer2.subsume($$inner_renderer);
     if ($$store_subs) unsubscribe_stores($$store_subs);
   });
 }

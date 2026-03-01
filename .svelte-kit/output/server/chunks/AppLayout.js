@@ -1,16 +1,16 @@
-import { s as sanitize_props, i as spread_props, j as slot, l as attributes, g as clsx, k as escape_html, b as bind_props, p as hasContext, q as getContext, t as setContext, n as derived, v as getAllContexts, w as run, e as ensure_array_like, o as element, c as store_get, u as unsubscribe_stores, d as attr_class, a as attr } from "./index2.js";
+import { s as sanitize_props, i as spread_props, j as slot, l as attributes, g as clsx, k as escape_html, b as bind_props, p as hasContext, q as getContext, t as setContext, m as derived, v as getAllContexts, w as run, e as ensure_array_like, o as element, c as store_get, u as unsubscribe_stores, d as attr_class, a as attr } from "./index2.js";
 import { p as page } from "./stores.js";
 import "@sveltejs/kit/internal";
 import "./exports.js";
 import "./utils.js";
 import "@sveltejs/kit/internal/server";
 import { o as on } from "./root.js";
-import "./state.svelte.js";
-import { I as Icon$1, c as cn, b as buttonVariants, B as Button } from "./card-content.js";
+import { I as Icon$1, c as cn } from "./utils2.js";
 import { l as auth } from "./auth.js";
 import { t as tick, m as mount, u as unmount, p as preferencesStore } from "./preferences.js";
 import { format, addDays, parseISO, isBefore as isBefore$1, isAfter as isAfter$1, startOfDay } from "date-fns";
 import { CalendarDateTime, CalendarDate, ZonedDateTime, getLocalTimeZone, parseZonedDateTime, parseDateTime, parseDate, toCalendar, getDayOfWeek, DateFormatter, isSameDay, startOfMonth, endOfMonth, isSameMonth, isToday } from "@internationalized/date";
+import { b as buttonVariants, B as Button } from "./card-content.js";
 import { d as defaultWindow, b as box, w as watch, e as executeCallbacks, u as useRefById, a as useId, m as mergeProps, c as composeHandlers, s as srOnlyStylesString, f as cssToStyleObj, g as styleToString, L as Label, I as Input, D as Dollar_sign } from "./label.js";
 import "style-to-object";
 import "clsx";
@@ -9110,7 +9110,12 @@ const INCOME_CATEGORIES = [
 function TransactionForm($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     var $$store_subs;
-    let { transaction = void 0, open = false, children } = $$props;
+    let {
+      transaction = void 0,
+      open = false,
+      initialType = "expense",
+      children
+    } = $$props;
     const addTx = createAddTransactionMutation();
     const updateTx = createUpdateTransactionMutation();
     const addRecurring = createAddRecurringMutation();

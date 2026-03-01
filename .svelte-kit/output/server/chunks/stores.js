@@ -5,7 +5,7 @@ import "./exports.js";
 import "./utils.js";
 import "@sveltejs/kit/internal/server";
 import "./root.js";
-import "./state.svelte.js";
+import "./utils2.js";
 const getStores = () => {
   const stores = getContext("__svelte__");
   return {

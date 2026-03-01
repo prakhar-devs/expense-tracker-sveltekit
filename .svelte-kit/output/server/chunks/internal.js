@@ -29,7 +29,7 @@ const options = {
   service_worker: false,
   service_worker_options: void 0,
   templates: {
-    app: ({ head, body, assets, nonce, env }) => '<!doctype html>\n<html lang="en">\n\n<head>\n    <meta charset="utf-8" />\n    <link rel="icon" href="' + assets + '/favicon.ico" />\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <meta name="description" content="SpendWise — track and manage your personal finances" />\n    <meta name="theme-color" content="#ffffff" />\n    <link rel="apple-touch-icon" href="' + assets + '/pwa-192x192.png" />\n    <link rel="manifest" crossorigin="use-credentials" href="' + assets + '/manifest.webmanifest" />\n    <title>SpendWise</title>\n    ' + head + '\n</head>\n\n<body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body + "</div>\n</body>\n\n</html>",
+    app: ({ head, body, assets, nonce, env }) => '<!doctype html>\n<html lang="en">\n\n<head>\n    <meta charset="utf-8" />\n    <link rel="icon" href="' + assets + '/favicon.ico" />\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <meta name="description" content="SpendWise — track and manage your personal finances" />\n    <meta name="theme-color" content="#ffffff" />\n    <link rel="apple-touch-icon" href="/pwa-192x192.png" />\n    <link rel="manifest" crossorigin="use-credentials" href="/manifest.webmanifest" />\n    <title>SpendWise</title>\n    ' + head + '\n</head>\n\n<body data-sveltekit-preload-data="hover">\n    <div style="display: contents">' + body + "</div>\n</body>\n\n</html>",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -101,7 +101,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "7wgi9m"
+  version_hash: "w3t252"
 };
 async function get_hooks() {
   let handle;

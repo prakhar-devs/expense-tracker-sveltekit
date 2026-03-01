@@ -1,8 +1,9 @@
 import { s as supabase } from "./supabaseClient.js";
 import { S as Subscribable, q as pendingThenable, t as resolveEnabled, u as shallowEqualObjects, r as resolveStaleTime, d as noop, v as isServer, w as isValidTimeout, x as timeUntilStale, y as timeoutManager, g as focusManager, z as fetchState, A as replaceData, n as notifyManager, j as hashKey, B as getDefaultState, C as getIsRestoringContext, D as getQueryClientContext, l as auth } from "./auth.js";
 import { format, subMonths } from "date-fns";
-import { g as get } from "./index.js";
-import { n as derived } from "./index2.js";
+import { g as get$1 } from "./index.js";
+import { get, set } from "idb-keyval";
+import { m as derived } from "./index2.js";
 import "clsx";
 import { a as SvelteSet } from "./index-server.js";
 var QueryObserver = class extends Subscribable {
@@ -716,9 +717,44 @@ function createMutation(options, queryClient) {
   }));
   return resultProxy();
 }
+const OFFLINE_QUEUE_KEY = "spendwise_offline_queue";
+async function queueOfflineMutation(type, payload) {
+  const queue = await get(OFFLINE_QUEUE_KEY) || [];
+  const id = crypto.randomUUID();
+  queue.push({ id, type, payload, timestamp: Date.now() });
+  await set(OFFLINE_QUEUE_KEY, queue);
+  return id;
+}
+async function processOfflineQueue() {
+  if (typeof window === "undefined" || !navigator.onLine) return;
+  const queue = await get(OFFLINE_QUEUE_KEY) || [];
+  if (queue.length === 0) return;
+  const remaining = [];
+  for (const item of queue) {
+    try {
+      if (item.type === "add_transaction") {
+        const { error } = await supabase.from("transactions").insert(item.payload);
+        if (error) throw error;
+      } else if (item.type === "delete_transaction") {
+        const { error } = await supabase.from("transactions").delete().eq("id", item.payload);
+        if (error) throw error;
+      }
+    } catch (err) {
+      console.error("Sync Engine: Failed to process mutation", item, err);
+      remaining.push(item);
+    }
+  }
+  await set(OFFLINE_QUEUE_KEY, remaining);
+  window.dispatchEvent(new CustomEvent("spendwise-sync-complete"));
+}
+if (typeof window !== "undefined") {
+  window.addEventListener("online", () => {
+    processOfflineQueue();
+  });
+}
 const PAGE_SIZE = 20;
 function getUserId() {
-  return get(auth).user?.id;
+  return get$1(auth).user?.id;
 }
 function createTransactionsQuery(getUserId2, initialData) {
   return createQuery(() => {
@@ -789,15 +825,41 @@ function createAddTransactionMutation() {
   const qc = useQueryClient();
   const userId = getUserId();
   return createMutation(() => ({
+    onMutate: async (tx) => {
+      await qc.cancelQueries({ queryKey: ["transactions", userId] });
+      await qc.cancelQueries({ queryKey: ["transactions-paged", userId] });
+      const previousTxs = qc.getQueryData(["transactions", userId]);
+      const tempId = crypto.randomUUID();
+      const optimisticTx = {
+        ...tx,
+        id: tempId,
+        user_id: userId,
+        created_at: (/* @__PURE__ */ new Date()).toISOString(),
+        updated_at: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      qc.setQueryData(["transactions", userId], (old) => old ? [optimisticTx, ...old] : [optimisticTx]);
+      return { previousTxs, tempId };
+    },
     mutationFn: async (tx) => {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await queueOfflineMutation("add_transaction", { ...tx, user_id: userId });
+        return;
+      }
       const { data, error } = await supabase.from("transactions").insert({ ...tx, user_id: userId }).select().single();
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["transactions"] });
-      qc.invalidateQueries({ queryKey: ["transactions-paged"] });
-      qc.invalidateQueries({ queryKey: ["budgets"] });
+    onError: (err, newTx, context) => {
+      if (context?.previousTxs) {
+        qc.setQueryData(["transactions", userId], context.previousTxs);
+      }
+    },
+    onSettled: () => {
+      if (typeof navigator === "undefined" || navigator.onLine) {
+        qc.invalidateQueries({ queryKey: ["transactions"] });
+        qc.invalidateQueries({ queryKey: ["transactions-paged"] });
+        qc.invalidateQueries({ queryKey: ["budgets"] });
+      }
     }
   }));
 }
@@ -818,15 +880,34 @@ function createUpdateTransactionMutation() {
 }
 function createDeleteTransactionMutation() {
   const qc = useQueryClient();
+  const userId = getUserId();
   return createMutation(() => ({
+    onMutate: async (id) => {
+      await qc.cancelQueries({ queryKey: ["transactions", userId] });
+      await qc.cancelQueries({ queryKey: ["transactions-paged", userId] });
+      const previousTxs = qc.getQueryData(["transactions", userId]);
+      qc.setQueryData(["transactions", userId], (old) => old ? old.filter((t) => t.id !== id) : []);
+      return { previousTxs };
+    },
     mutationFn: async (id) => {
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        await queueOfflineMutation("delete_transaction", id);
+        return;
+      }
       const { error } = await supabase.from("transactions").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["transactions"] });
-      qc.invalidateQueries({ queryKey: ["transactions-paged"] });
-      qc.invalidateQueries({ queryKey: ["budgets"] });
+    onError: (err, newTx, context) => {
+      if (context?.previousTxs) {
+        qc.setQueryData(["transactions", userId], context.previousTxs);
+      }
+    },
+    onSettled: () => {
+      if (typeof navigator === "undefined" || navigator.onLine) {
+        qc.invalidateQueries({ queryKey: ["transactions"] });
+        qc.invalidateQueries({ queryKey: ["transactions-paged"] });
+        qc.invalidateQueries({ queryKey: ["budgets"] });
+      }
     }
   }));
 }

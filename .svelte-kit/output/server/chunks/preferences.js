@@ -20,7 +20,10 @@ const DEFAULT_PREFERENCES = {
   currency: "USD",
   firstDayOfWeek: 1,
   sidebarCollapsed: false,
-  showAnimations: true
+  showAnimations: true,
+  appLockEnabled: false,
+  appLockPin: "",
+  biometricsEnabled: false
 };
 function createPreferencesStore() {
   const initial = DEFAULT_PREFERENCES;

@@ -1,6 +1,7 @@
-import { s as sanitize_props, i as spread_props, j as slot, c as store_get, e as ensure_array_like, k as escape_html, d as attr_class, g as clsx, h as attr_style, m as stringify, a as attr, u as unsubscribe_stores, n as derived } from "../../../chunks/index2.js";
-import { I as Icon, C as Card, a as Card_content, B as Button, c as cn } from "../../../chunks/card-content.js";
+import { s as sanitize_props, i as spread_props, j as slot, c as store_get, e as ensure_array_like, k as escape_html, d as attr_class, g as clsx, h as attr_style, n as stringify, a as attr, u as unsubscribe_stores, m as derived } from "../../../chunks/index2.js";
+import { C as Card, a as Card_content, B as Button } from "../../../chunks/card-content.js";
 import { C as Card_description } from "../../../chunks/card-description.js";
+import { I as Icon, c as cn } from "../../../chunks/utils2.js";
 import { C as Card_header, a as Card_title } from "../../../chunks/card-title.js";
 import { L as Label } from "../../../chunks/label.js";
 import { A as AppLayout, p as Switch, q as Root, r as Select_trigger, s as Select_content, t as Select_item } from "../../../chunks/AppLayout.js";
@@ -423,6 +424,85 @@ function Panels_top_left($$renderer, $$props) {
     }
   ]));
 }
+function Shield($$renderer, $$props) {
+  const $$sanitized_props = sanitize_props($$props);
+  /**
+   * @license lucide-svelte v0.575.0 - ISC
+   *
+   * ISC License
+   *
+   * Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2026 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2026.
+   *
+   * Permission to use, copy, modify, and/or distribute this software for any
+   * purpose with or without fee is hereby granted, provided that the above
+   * copyright notice and this permission notice appear in all copies.
+   *
+   * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+   * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+   * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+   * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+   * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+   * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+   * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   *
+   * ---
+   *
+   * The MIT License (MIT) (for portions derived from Feather)
+   *
+   * Copyright (c) 2013-2026 Cole Bemis
+   *
+   * Permission is hereby granted, free of charge, to any person obtaining a copy
+   * of this software and associated documentation files (the "Software"), to deal
+   * in the Software without restriction, including without limitation the rights
+   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   * copies of the Software, and to permit persons to whom the Software is
+   * furnished to do so, subject to the following conditions:
+   *
+   * The above copyright notice and this permission notice shall be included in all
+   * copies or substantial portions of the Software.
+   *
+   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   * SOFTWARE.
+   *
+   */
+  const iconNode = [
+    [
+      "path",
+      {
+        "d": "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+      }
+    ]
+  ];
+  Icon($$renderer, spread_props([
+    { name: "shield" },
+    $$sanitized_props,
+    {
+      /**
+       * @component @name Shield
+       * @description Lucide SVG icon component, renders SVG Element with children.
+       *
+       * @preview ![img](data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogIHdpZHRoPSIyNCIKICBoZWlnaHQ9IjI0IgogIHZpZXdCb3g9IjAgMCAyNCAyNCIKICBmaWxsPSJub25lIgogIHN0cm9rZT0iIzAwMCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6ICNmZmY7IGJvcmRlci1yYWRpdXM6IDJweCIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cGF0aCBkPSJNMjAgMTNjMCA1LTMuNSA3LjUtNy42NiA4Ljk1YTEgMSAwIDAgMS0uNjctLjAxQzcuNSAyMC41IDQgMTggNCAxM1Y2YTEgMSAwIDAgMSAxLTFjMiAwIDQuNS0xLjIgNi4yNC0yLjcyYTEuMTcgMS4xNyAwIDAgMSAxLjUyIDBDMTQuNTEgMy44MSAxNyA1IDE5IDVhMSAxIDAgMCAxIDEgMXoiIC8+Cjwvc3ZnPgo=) - https://lucide.dev/icons/shield
+       * @see https://lucide.dev/guide/packages/lucide-svelte - Documentation
+       *
+       * @param {Object} props - Lucide icons props and any valid SVG attribute
+       * @returns {FunctionalComponent} Svelte component
+       *
+       */
+      iconNode,
+      children: ($$renderer2) => {
+        $$renderer2.push(`<!--[-->`);
+        slot($$renderer2, $$props, "default", {}, null);
+        $$renderer2.push(`<!--]-->`);
+      },
+      $$slots: { default: true }
+    }
+  ]));
+}
 function Sun($$renderer, $$props) {
   const $$sanitized_props = sanitize_props($$props);
   /**
@@ -531,6 +611,7 @@ function _page($$renderer, $$props) {
     let customColor = store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).accentColor;
     let currency = derived(() => store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).currency);
     let firstDayOfWeek = derived(() => store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).firstDayOfWeek);
+    let pinInput = store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).appLockPin;
     function handleUpdate(updates) {
       try {
         preferencesStore.mergePreferences(updates);
@@ -967,6 +1048,126 @@ function _page($$renderer, $$props) {
                       $$renderer5.push("<!--]-->");
                     }
                     $$renderer5.push(`</div>`);
+                  },
+                  $$slots: { default: true }
+                });
+                $$renderer4.push("<!--]-->");
+              } else {
+                $$renderer4.push("<!--[!-->");
+                $$renderer4.push("<!--]-->");
+              }
+            },
+            $$slots: { default: true }
+          });
+          $$renderer3.push("<!--]-->");
+        } else {
+          $$renderer3.push("<!--[!-->");
+          $$renderer3.push("<!--]-->");
+        }
+        $$renderer3.push(` `);
+        if (Card) {
+          $$renderer3.push("<!--[-->");
+          Card($$renderer3, {
+            class: "border-border/50",
+            children: ($$renderer4) => {
+              if (Card_header) {
+                $$renderer4.push("<!--[-->");
+                Card_header($$renderer4, {
+                  children: ($$renderer5) => {
+                    if (Card_title) {
+                      $$renderer5.push("<!--[-->");
+                      Card_title($$renderer5, {
+                        class: "flex items-center gap-2",
+                        children: ($$renderer6) => {
+                          Shield($$renderer6, { class: "h-5 w-5" });
+                          $$renderer6.push(`<!----> Security`);
+                        },
+                        $$slots: { default: true }
+                      });
+                      $$renderer5.push("<!--]-->");
+                    } else {
+                      $$renderer5.push("<!--[!-->");
+                      $$renderer5.push("<!--]-->");
+                    }
+                    $$renderer5.push(` `);
+                    if (Card_description) {
+                      $$renderer5.push("<!--[-->");
+                      Card_description($$renderer5, {
+                        children: ($$renderer6) => {
+                          $$renderer6.push(`<!---->Protect your financial data with App Lock`);
+                        },
+                        $$slots: { default: true }
+                      });
+                      $$renderer5.push("<!--]-->");
+                    } else {
+                      $$renderer5.push("<!--[!-->");
+                      $$renderer5.push("<!--]-->");
+                    }
+                  },
+                  $$slots: { default: true }
+                });
+                $$renderer4.push("<!--]-->");
+              } else {
+                $$renderer4.push("<!--[!-->");
+                $$renderer4.push("<!--]-->");
+              }
+              $$renderer4.push(` `);
+              if (Card_content) {
+                $$renderer4.push("<!--[-->");
+                Card_content($$renderer4, {
+                  class: "space-y-6",
+                  children: ($$renderer5) => {
+                    $$renderer5.push(`<div class="flex items-center justify-between"><div class="space-y-0.5">`);
+                    Label($$renderer5, {
+                      children: ($$renderer6) => {
+                        $$renderer6.push(`<!---->Enable App Lock`);
+                      },
+                      $$slots: { default: true }
+                    });
+                    $$renderer5.push(`<!----> <p class="text-sm text-muted-foreground text-xs">Require a PIN to open SpendWise</p></div> `);
+                    Switch($$renderer5, {
+                      checked: store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).appLockEnabled,
+                      onCheckedChange: (checked) => {
+                        handleUpdate({ appLockEnabled: checked });
+                        if (!checked) {
+                          handleUpdate({ appLockPin: "", biometricsEnabled: false });
+                          pinInput = "";
+                        }
+                      }
+                    });
+                    $$renderer5.push(`<!----></div> `);
+                    if (store_get($$store_subs ??= {}, "$preferencesStore", preferencesStore).appLockEnabled) {
+                      $$renderer5.push("<!--[-->");
+                      $$renderer5.push(`<div class="space-y-3 animate-in fade-in slide-in-from-top-2">`);
+                      Label($$renderer5, {
+                        children: ($$renderer6) => {
+                          $$renderer6.push(`<!---->App Lock PIN (4 digits)`);
+                        },
+                        $$slots: { default: true }
+                      });
+                      $$renderer5.push(`<!----> <div class="flex gap-2 max-w-xs"><input type="password" inputmode="numeric" maxlength="4" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm md:text-md ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"${attr("value", pinInput)} placeholder="Enter 4-digit PIN"/> `);
+                      Button($$renderer5, {
+                        onclick: () => {
+                          if (pinInput.length === 4) {
+                            handleUpdate({ appLockPin: pinInput });
+                          } else {
+                            toast.error("PIN must be exactly 4 digits");
+                          }
+                        },
+                        children: ($$renderer6) => {
+                          $$renderer6.push(`<!---->Save`);
+                        },
+                        $$slots: { default: true }
+                      });
+                      $$renderer5.push(`<!----></div></div> `);
+                      {
+                        $$renderer5.push("<!--[!-->");
+                      }
+                      $$renderer5.push(`<!--]-->`);
+                    } else {
+                      $$renderer5.push("<!--[!-->");
+                    }
+                    $$renderer5.push(`<!--]-->`);
                   },
                   $$slots: { default: true }
                 });

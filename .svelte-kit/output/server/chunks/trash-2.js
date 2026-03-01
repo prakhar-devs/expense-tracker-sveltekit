@@ -1,5 +1,5 @@
 import { s as sanitize_props, i as spread_props, j as slot } from "./index2.js";
-import { I as Icon } from "./card-content.js";
+import { I as Icon } from "./utils2.js";
 function Trash_2($$renderer, $$props) {
   const $$sanitized_props = sanitize_props($$props);
   /**

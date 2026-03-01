@@ -1,7 +1,8 @@
 import { s as sanitize_props, i as spread_props, j as slot, k as escape_html, c as store_get, u as unsubscribe_stores } from "../../chunks/index2.js";
 import { p as page } from "../../chunks/stores.js";
-import { I as Icon, C as Card, a as Card_content, B as Button } from "../../chunks/card-content.js";
+import { C as Card, a as Card_content, B as Button } from "../../chunks/card-content.js";
 import "clsx";
+import { I as Icon } from "../../chunks/utils2.js";
 function Arrow_left($$renderer, $$props) {
   const $$sanitized_props = sanitize_props($$props);
   /**
