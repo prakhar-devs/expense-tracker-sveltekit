@@ -44,6 +44,7 @@ export interface TransactionFilters {
     search?: string;
     dateFrom?: string;
     dateTo?: string;
+    amountOrder?: 'asc' | 'desc';
 }
 
 export interface PagedResult<T> {
@@ -76,10 +77,15 @@ export function createTransactionsPagedQuery(
                 let countQ = supabase.from('transactions').select('id', { count: 'exact', head: true });
                 let dataQ = supabase
                     .from('transactions')
-                    .select('*')
-                    .order('date', { ascending: false })
-                    .order('created_at', { ascending: false })
-                    .range(from, to);
+                    .select('*');
+
+                if (filters.amountOrder) {
+                    dataQ = dataQ.order('amount', { ascending: filters.amountOrder === 'asc' });
+                } else {
+                    dataQ = dataQ.order('date', { ascending: false }).order('created_at', { ascending: false });
+                }
+
+                dataQ = dataQ.range(from, to);
 
                 if (filters.type && filters.type !== 'all') {
                     countQ = countQ.eq('type', filters.type);

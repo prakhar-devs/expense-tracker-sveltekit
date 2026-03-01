@@ -36,6 +36,7 @@
     let typeFilter = $state<"all" | "income" | "expense">("all");
     let dateFrom = $state<CalendarDate | undefined>();
     let dateTo = $state<CalendarDate | undefined>();
+    let amountOrder = $state<"asc" | "desc" | "date">("date");
 
     // Reset page when filters change
     $effect(() => {
@@ -43,6 +44,7 @@
         typeFilter;
         dateFrom;
         dateTo;
+        amountOrder;
         page = 1;
     });
 
@@ -51,6 +53,7 @@
         typeFilter = "all";
         dateFrom = undefined;
         dateTo = undefined;
+        amountOrder = "date";
     }
 
     // Use the paginated query hook
@@ -62,13 +65,15 @@
             type: typeFilter === "all" ? undefined : typeFilter,
             dateFrom: dateFrom?.toString(),
             dateTo: dateTo?.toString(),
+            amountOrder: amountOrder === "date" ? undefined : amountOrder,
         }),
         () =>
             page === 1 &&
             !searchTerm &&
             typeFilter === "all" &&
             !dateFrom &&
-            !dateTo
+            !dateTo &&
+            amountOrder === "date"
                 ? data.preloaded?.transactionsPaged
                 : undefined,
     );
@@ -163,9 +168,9 @@
                     {/if}
                 </div>
 
-                <div class="flex items-center gap-2 w-full lg:w-auto">
+                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
                     <!-- Type Selector -->
-                    <div class="flex-1 lg:w-36 shrink-0">
+                    <div class="flex-1 min-w-[120px] lg:w-36 shrink-0">
                         <Select.Root type="single" bind:value={typeFilter}>
                             <Select.Trigger
                                 class="w-full h-11 lg:h-10 bg-muted/5 border-border/50"
@@ -187,8 +192,38 @@
                         </Select.Root>
                     </div>
 
+                    <!-- Sort by Amount -->
+                    <div class="flex-1 min-w-[140px] lg:w-36 shrink-0">
+                        <Select.Root type="single" bind:value={amountOrder}>
+                            <Select.Trigger
+                                class="w-full h-11 lg:h-10 bg-muted/5 border-border/50"
+                            >
+                                <span class="truncate">
+                                    {amountOrder === "desc"
+                                        ? "Highest First"
+                                        : amountOrder === "asc"
+                                          ? "Lowest First"
+                                          : "Sort by Amount"}
+                                </span>
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="date"
+                                    >Default (Date)</Select.Item
+                                >
+                                <Select.Item value="desc"
+                                    >Highest First</Select.Item
+                                >
+                                <Select.Item value="asc"
+                                    >Lowest First</Select.Item
+                                >
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
                     <!-- Date Range -->
-                    <div class="flex items-center gap-1.5 flex-1 lg:flex-none">
+                    <div
+                        class="flex items-center gap-1.5 flex-1 min-w-[260px] lg:flex-none"
+                    >
                         <Popover.Root>
                             <Popover.Trigger>
                                 {#snippet child({ props })}
@@ -256,7 +291,7 @@
                     </div>
 
                     <!-- Reset Button - only shows if any filter is active -->
-                    {#if searchTerm || typeFilter !== "all" || dateFrom || dateTo}
+                    {#if searchTerm || typeFilter !== "all" || dateFrom || dateTo || amountOrder !== "date"}
                         <Button
                             variant="ghost"
                             size="icon"
