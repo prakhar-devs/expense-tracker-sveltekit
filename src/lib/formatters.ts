@@ -1,4 +1,4 @@
-import { UserPreferences } from "@/lib/constants";
+import type { UserPreferences } from '$lib/constants';
 
 export const formatCurrency = (amount: number, preferences: UserPreferences) => {
     return new Intl.NumberFormat(undefined, {

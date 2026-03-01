@@ -1,0 +1,511 @@
+{
+  ".svelte-kit/generated/server/internal.js": {
+    "file": "internal.js",
+    "name": "internal",
+    "src": ".svelte-kit/generated/server/internal.js",
+    "isEntry": true,
+    "imports": [
+      "_root.js",
+      "_environment.js",
+      "_internal.js"
+    ]
+  },
+  "_AppLayout.BRUFLwGW.css": {
+    "file": "_app/immutable/assets/AppLayout.BRUFLwGW.css",
+    "src": "_AppLayout.BRUFLwGW.css"
+  },
+  "_AppLayout.js": {
+    "file": "chunks/AppLayout.js",
+    "name": "AppLayout",
+    "imports": [
+      "_index2.js",
+      "_stores.js",
+      "_exports.js",
+      "_utils.js",
+      "_root.js",
+      "_state.svelte.js",
+      "_card-content.js",
+      "_auth.js",
+      "_preferences.js",
+      "_label.js",
+      "_data.js",
+      "_Toaster.svelte_svelte_type_style_lang.js"
+    ],
+    "css": [
+      "_app/immutable/assets/AppLayout.BRUFLwGW.css"
+    ]
+  },
+  "_Toaster.Bg80vLgj.css": {
+    "file": "_app/immutable/assets/Toaster.Bg80vLgj.css",
+    "src": "_Toaster.Bg80vLgj.css"
+  },
+  "_Toaster.svelte_svelte_type_style_lang.js": {
+    "file": "chunks/Toaster.svelte_svelte_type_style_lang.js",
+    "name": "Toaster.svelte_svelte_type_style_lang",
+    "imports": [
+      "_index.js"
+    ],
+    "css": [
+      "_app/immutable/assets/Toaster.Bg80vLgj.css"
+    ]
+  },
+  "_TransactionItem.js": {
+    "file": "chunks/TransactionItem.js",
+    "name": "TransactionItem",
+    "imports": [
+      "_index2.js",
+      "_card-content.js",
+      "_data.js",
+      "_formatters.js",
+      "_preferences.js",
+      "_AppLayout.js",
+      "_Toaster.svelte_svelte_type_style_lang.js",
+      "_index3.js",
+      "_trash-2.js"
+    ]
+  },
+  "_auth.js": {
+    "file": "chunks/auth.js",
+    "name": "auth",
+    "imports": [
+      "_index2.js",
+      "_index.js",
+      "_supabaseClient.js"
+    ]
+  },
+  "_card-content.js": {
+    "file": "chunks/card-content.js",
+    "name": "card-content",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_card-description.js": {
+    "file": "chunks/card-description.js",
+    "name": "card-description",
+    "imports": [
+      "_index2.js",
+      "_card-content.js"
+    ]
+  },
+  "_card-title.js": {
+    "file": "chunks/card-title.js",
+    "name": "card-title",
+    "imports": [
+      "_index2.js",
+      "_card-content.js"
+    ]
+  },
+  "_check.js": {
+    "file": "chunks/check.js",
+    "name": "check",
+    "imports": [
+      "_index2.js",
+      "_card-content.js"
+    ]
+  },
+  "_data.js": {
+    "file": "chunks/data.js",
+    "name": "data",
+    "imports": [
+      "_supabaseClient.js",
+      "_auth.js",
+      "_index.js",
+      "_index2.js",
+      "_index-server.js"
+    ]
+  },
+  "_environment.js": {
+    "file": "chunks/environment.js",
+    "name": "environment"
+  },
+  "_exports.js": {
+    "file": "chunks/exports.js",
+    "name": "exports"
+  },
+  "_false.js": {
+    "file": "chunks/false.js",
+    "name": "false"
+  },
+  "_formatters.js": {
+    "file": "chunks/formatters.js",
+    "name": "formatters"
+  },
+  "_index-server.js": {
+    "file": "chunks/index-server.js",
+    "name": "index-server"
+  },
+  "_index.js": {
+    "file": "chunks/index.js",
+    "name": "index",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_index2.js": {
+    "file": "chunks/index2.js",
+    "name": "index",
+    "imports": [
+      "_false.js"
+    ]
+  },
+  "_index3.js": {
+    "file": "chunks/index3.js",
+    "name": "index",
+    "imports": [
+      "_index2.js",
+      "_card-content.js",
+      "_AppLayout.js",
+      "_label.js"
+    ]
+  },
+  "_internal.js": {
+    "file": "chunks/internal.js",
+    "name": "internal",
+    "imports": [
+      "_root.js",
+      "_environment.js"
+    ]
+  },
+  "_label.js": {
+    "file": "chunks/label.js",
+    "name": "label",
+    "imports": [
+      "_index2.js",
+      "_card-content.js",
+      "_index-server.js"
+    ]
+  },
+  "_plus.js": {
+    "file": "chunks/plus.js",
+    "name": "plus",
+    "imports": [
+      "_index2.js",
+      "_card-content.js"
+    ]
+  },
+  "_preferences.js": {
+    "file": "chunks/preferences.js",
+    "name": "preferences",
+    "imports": [
+      "_index2.js",
+      "_index.js"
+    ]
+  },
+  "_root.js": {
+    "file": "chunks/root.js",
+    "name": "root",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_shared.js": {
+    "file": "chunks/shared.js",
+    "name": "shared",
+    "imports": [
+      "_utils.js"
+    ]
+  },
+  "_state.svelte.js": {
+    "file": "chunks/state.svelte.js",
+    "name": "state.svelte",
+    "imports": [
+      "_index2.js",
+      "_exports.js",
+      "_root.js"
+    ]
+  },
+  "_stores.js": {
+    "file": "chunks/stores.js",
+    "name": "stores",
+    "imports": [
+      "_index2.js",
+      "_exports.js",
+      "_utils.js",
+      "_root.js",
+      "_state.svelte.js"
+    ]
+  },
+  "_supabaseClient.js": {
+    "file": "chunks/supabaseClient.js",
+    "name": "supabaseClient",
+    "imports": [
+      "_false.js"
+    ]
+  },
+  "_trash-2.js": {
+    "file": "chunks/trash-2.js",
+    "name": "trash-2",
+    "imports": [
+      "_index2.js",
+      "_card-content.js"
+    ]
+  },
+  "_utils.js": {
+    "file": "chunks/utils.js",
+    "name": "utils"
+  },
+  "node_modules/.pnpm/@sveltejs+kit@2.53.4_@sveltejs+vite-plugin-svelte@6.2.4_svelte@5.53.6_vite@6.4.1_@types_2e9d3df52b17f041707d5886669b7412/node_modules/@sveltejs/kit/src/runtime/app/server/remote/index.js": {
+    "file": "remote-entry.js",
+    "name": "remote-entry",
+    "src": "node_modules/.pnpm/@sveltejs+kit@2.53.4_@sveltejs+vite-plugin-svelte@6.2.4_svelte@5.53.6_vite@6.4.1_@types_2e9d3df52b17f041707d5886669b7412/node_modules/@sveltejs/kit/src/runtime/app/server/remote/index.js",
+    "isEntry": true,
+    "imports": [
+      "_shared.js",
+      "_false.js",
+      "_environment.js"
+    ]
+  },
+  "node_modules/.pnpm/@sveltejs+kit@2.53.4_@sveltejs+vite-plugin-svelte@6.2.4_svelte@5.53.6_vite@6.4.1_@types_2e9d3df52b17f041707d5886669b7412/node_modules/@sveltejs/kit/src/runtime/server/index.js": {
+    "file": "index.js",
+    "name": "index",
+    "src": "node_modules/.pnpm/@sveltejs+kit@2.53.4_@sveltejs+vite-plugin-svelte@6.2.4_svelte@5.53.6_vite@6.4.1_@types_2e9d3df52b17f041707d5886669b7412/node_modules/@sveltejs/kit/src/runtime/server/index.js",
+    "isEntry": true,
+    "imports": [
+      "_false.js",
+      "_environment.js",
+      "_shared.js",
+      "_exports.js",
+      "_utils.js",
+      "_index.js",
+      "_internal.js"
+    ]
+  },
+  "src/routes/+error.svelte": {
+    "file": "entries/pages/_error.svelte.js",
+    "name": "entries/pages/_error.svelte",
+    "src": "src/routes/+error.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_stores.js",
+      "_card-content.js"
+    ]
+  },
+  "src/routes/+layout.svelte": {
+    "file": "entries/pages/_layout.svelte.js",
+    "name": "entries/pages/_layout.svelte",
+    "src": "src/routes/+layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_exports.js",
+      "_utils.js",
+      "_root.js",
+      "_state.svelte.js",
+      "_auth.js",
+      "_preferences.js",
+      "_Toaster.svelte_svelte_type_style_lang.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_layout.DcWmIQu3.css"
+    ]
+  },
+  "src/routes/+layout.ts": {
+    "file": "entries/pages/_layout.ts.js",
+    "name": "entries/pages/_layout.ts",
+    "src": "src/routes/+layout.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/+page.svelte": {
+    "file": "entries/pages/_page.svelte.js",
+    "name": "entries/pages/_page.svelte",
+    "src": "src/routes/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_AppLayout.js",
+      "_card-content.js",
+      "_card-description.js",
+      "_card-title.js",
+      "_TransactionItem.js",
+      "_formatters.js",
+      "_preferences.js",
+      "_data.js",
+      "_auth.js",
+      "_plus.js"
+    ]
+  },
+  "src/routes/+page.ts": {
+    "file": "entries/pages/_page.ts.js",
+    "name": "entries/pages/_page.ts",
+    "src": "src/routes/+page.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/auth/+page.svelte": {
+    "file": "entries/pages/auth/_page.svelte.js",
+    "name": "entries/pages/auth/_page.svelte",
+    "src": "src/routes/auth/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_exports.js",
+      "_utils.js",
+      "_root.js",
+      "_state.svelte.js",
+      "_supabaseClient.js",
+      "_card-content.js",
+      "_label.js",
+      "_card-description.js",
+      "_card-title.js",
+      "_Toaster.svelte_svelte_type_style_lang.js"
+    ]
+  },
+  "src/routes/budgets/+page.svelte": {
+    "file": "entries/pages/budgets/_page.svelte.js",
+    "name": "entries/pages/budgets/_page.svelte",
+    "src": "src/routes/budgets/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_AppLayout.js",
+      "_card-content.js",
+      "_card-title.js",
+      "_formatters.js",
+      "_preferences.js",
+      "_label.js",
+      "_data.js",
+      "_auth.js",
+      "_plus.js"
+    ]
+  },
+  "src/routes/budgets/+page.ts": {
+    "file": "entries/pages/budgets/_page.ts.js",
+    "name": "entries/pages/budgets/_page.ts",
+    "src": "src/routes/budgets/+page.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/notifications/+page.svelte": {
+    "file": "entries/pages/notifications/_page.svelte.js",
+    "name": "entries/pages/notifications/_page.svelte",
+    "src": "src/routes/notifications/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_AppLayout.js",
+      "_card-content.js",
+      "_data.js",
+      "_auth.js",
+      "_formatters.js",
+      "_preferences.js"
+    ]
+  },
+  "src/routes/notifications/+page.ts": {
+    "file": "entries/pages/notifications/_page.ts.js",
+    "name": "entries/pages/notifications/_page.ts",
+    "src": "src/routes/notifications/+page.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/profile/+page.svelte": {
+    "file": "entries/pages/profile/_page.svelte.js",
+    "name": "entries/pages/profile/_page.svelte",
+    "src": "src/routes/profile/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_AppLayout.js",
+      "_card-content.js",
+      "_label.js",
+      "_card-description.js",
+      "_card-title.js",
+      "_index-server.js",
+      "_auth.js",
+      "_data.js",
+      "_Toaster.svelte_svelte_type_style_lang.js",
+      "_check.js",
+      "_plus.js",
+      "_trash-2.js"
+    ]
+  },
+  "src/routes/profile/+page.ts": {
+    "file": "entries/pages/profile/_page.ts.js",
+    "name": "entries/pages/profile/_page.ts",
+    "src": "src/routes/profile/+page.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/recurring/+page.svelte": {
+    "file": "entries/pages/recurring/_page.svelte.js",
+    "name": "entries/pages/recurring/_page.svelte",
+    "src": "src/routes/recurring/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_card-content.js",
+      "_index3.js",
+      "_data.js",
+      "_preferences.js",
+      "_formatters.js",
+      "_AppLayout.js",
+      "_auth.js",
+      "_plus.js",
+      "_trash-2.js"
+    ]
+  },
+  "src/routes/recurring/+page.ts": {
+    "file": "entries/pages/recurring/_page.ts.js",
+    "name": "entries/pages/recurring/_page.ts",
+    "src": "src/routes/recurring/+page.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js"
+    ]
+  },
+  "src/routes/settings/+page.svelte": {
+    "file": "entries/pages/settings/_page.svelte.js",
+    "name": "entries/pages/settings/_page.svelte",
+    "src": "src/routes/settings/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_card-content.js",
+      "_card-description.js",
+      "_card-title.js",
+      "_label.js",
+      "_AppLayout.js",
+      "_preferences.js",
+      "_Toaster.svelte_svelte_type_style_lang.js",
+      "_check.js"
+    ]
+  },
+  "src/routes/transactions/+page.svelte": {
+    "file": "entries/pages/transactions/_page.svelte.js",
+    "name": "entries/pages/transactions/_page.svelte",
+    "src": "src/routes/transactions/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_index2.js",
+      "_AppLayout.js",
+      "_TransactionItem.js",
+      "_card-content.js",
+      "_data.js",
+      "_label.js",
+      "_auth.js",
+      "_plus.js"
+    ]
+  },
+  "src/routes/transactions/+page.ts": {
+    "file": "entries/pages/transactions/_page.ts.js",
+    "name": "entries/pages/transactions/_page.ts",
+    "src": "src/routes/transactions/+page.ts",
+    "isEntry": true,
+    "imports": [
+      "_supabaseClient.js",
+      "_data.js"
+    ]
+  }
+}

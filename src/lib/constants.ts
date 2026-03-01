@@ -18,6 +18,7 @@ export interface Transaction {
   note: string | null;
   created_at: string;
   updated_at: string;
+  recurring_id?: string | null;
 }
 
 export interface Category {
@@ -36,6 +37,9 @@ export interface UserPreferences {
   firstDayOfWeek: number;
   sidebarCollapsed: boolean;
   showAnimations: boolean;
+  appLockEnabled: boolean;
+  appLockPin: string;
+  biometricsEnabled: boolean;
 }
 
 export interface Profile {

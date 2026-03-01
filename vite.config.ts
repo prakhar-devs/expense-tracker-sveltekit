@@ -1,63 +1,72 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
-import { VitePWA } from "vite-plugin-pwa";
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
+import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-    hmr: {
-      overlay: false,
-    },
-  },
+export default defineConfig({
   plugins: [
-    react(),
-    mode === "development" && componentTagger(),
-    VitePWA({
-      registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
-      includeAssets: ["favicon.svg", "favicon.ico", "robots.txt", "apple-touch-icon-180x180.png"],
+    sveltekit(),
+    SvelteKitPWA({
+      registerType: 'autoUpdate',
+      injectRegister: 'auto',
       manifest: {
-        name: "SpendWise Expense Tracker",
-        short_name: "SpendWise",
-        description: "Manage your finances smartly with SpendWise.",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
-        display: "standalone",
+        name: 'SpendWise',
+        short_name: 'SpendWise',
+        description: 'Track and manage your personal finances',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
         icons: [
           {
-            src: "pwa-64x64.png",
-            sizes: "64x64",
-            type: "image/png"
+            src: '/pwa-64x64.png',
+            sizes: '64x64',
+            type: 'image/png'
           },
           {
-            src: "pwa-192x192.png",
-            sizes: "192x192",
-            type: "image/png"
+            src: '/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
           },
           {
-            src: "pwa-512x512.png",
-            sizes: "512x512",
-            type: "image/png"
+            src: '/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any'
           },
           {
-            src: "maskable-icon-512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable"
+            src: '/maskable-icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
+          }
+        ],
+        shortcuts: [
+          {
+            name: "Add Expense",
+            short_name: "Expense",
+            description: "Quickly log a new expense",
+            url: "/?action=add_expense",
+            icons: [{ src: "/pwa-192x192.png", sizes: "192x192" }]
+          },
+          {
+            name: "Add Income",
+            short_name: "Income",
+            description: "Quickly log new income",
+            url: "/?action=add_income",
+            icons: [{ src: "/pwa-192x192.png", sizes: "192x192" }]
           }
         ]
-      }
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+      },
+      devOptions: {
+        enabled: true,
+        suppressWarnings: process.env.SUPPRESS_WARNING === 'true',
+        type: 'module',
+        navigateFallback: '/',
+      },
     })
-  ].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-}));
+  ]
+});
