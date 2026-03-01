@@ -88,7 +88,7 @@
             );
         });
 
-        const sorted = [...categoryMap.entries()].sort((a, b) => b[1] - a[1]); // All categories, sorted by amount
+        const sorted = [...categoryMap.entries()].sort((a, b) => b[1] - a[1]);
 
         return {
             labels: sorted.map((item) => item[0]),
@@ -192,7 +192,10 @@
 </script>
 
 <AppLayout>
-    <div class="flex flex-col gap-6 animate-fade-in">
+    <!-- KEY FIX: min-w-0 + overflow-hidden on the root container prevents children from
+         blowing out the layout on narrow viewports. w-full alone isn't enough because
+         flex/grid children can still set an implicit minimum width. -->
+    <div class="flex flex-col gap-6 animate-fade-in w-full min-w-0 overflow-hidden">
         <div
             class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
@@ -274,29 +277,25 @@
             </Card.Root>
         </div>
 
-        <div class="grid gap-6 lg:grid-cols-3">
+        <div class="grid gap-6 lg:grid-cols-3 w-full min-w-0">
             <!-- Line Chart: Financial Trends -->
-            <Card.Root
-                class="lg:col-span-2 shadow-sm border-border/50 overflow-hidden"
-            >
+            <!-- KEY FIX: min-w-0 on the card prevents the card itself from overflowing its grid cell -->
+            <Card.Root class="lg:col-span-2 shadow-sm border-border/50 min-w-0 w-full">
                 <Card.Header
-                    class="flex flex-col sm:flex-row items-center justify-between pb-4 gap-4"
+                    class="flex flex-col items-start pb-4 gap-4 px-3 sm:px-6"
                 >
-                    <div class="space-y-1 w-full sm:w-auto">
-                        <Card.Title class="text-xl">Financial Trends</Card.Title
-                        >
-                        <Card.Description
-                            >Income vs Expenses over time</Card.Description
-                        >
+                    <div class="space-y-1 w-full">
+                        <Card.Title class="text-xl">Financial Trends</Card.Title>
+                        <Card.Description>Income vs Expenses over time</Card.Description>
                     </div>
+                    <!-- KEY FIX: The controls row was a horizontal flex that forced width on tiny screens.
+                         We now keep it fully column-stacked below sm, with w-full on every child. -->
                     <div
-                        class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto bg-muted/40 p-2 rounded-xl border border-border/40"
+                        class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full bg-muted/40 p-2 rounded-xl border border-border/40"
                     >
                         <!-- Slider Units Selector -->
-                        <div
-                            class="flex items-center gap-3 w-full sm:w-auto px-1 min-w-[140px]"
-                        >
-                            <div class="flex flex-col gap-0.5">
+                        <div class="flex items-center gap-3 w-full px-1">
+                            <div class="flex flex-col gap-0.5 shrink-0">
                                 <span
                                     class="text-[10px] uppercase font-bold text-muted-foreground whitespace-nowrap leading-none"
                                     >Range</span
@@ -307,12 +306,14 @@
                                     {timeframe}{chartUnits > 1 ? "s" : ""}</span
                                 >
                             </div>
+                            <!-- KEY FIX: min-w-0 + w-full so the range input fills available space
+                                 and doesn't create a fixed-width overflow -->
                             <input
                                 type="range"
                                 min="1"
                                 max="15"
                                 bind:value={chartUnits}
-                                class="flex-grow sm:w-24 h-1.5 bg-background rounded-full appearance-none cursor-pointer accent-primary border border-border/20
+                                class="w-full min-w-0 h-1.5 bg-background rounded-full appearance-none cursor-pointer accent-primary border border-border/20
                                        [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
                                        [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2
                                        [&::-webkit-slider-thumb]:border-background [&::-webkit-slider-thumb]:shadow-md
@@ -322,17 +323,15 @@
                             />
                         </div>
 
-                        <div
-                            class="hidden sm:block w-px h-6 bg-border/40"
-                        ></div>
+                        <div class="hidden sm:block w-px h-6 bg-border/40 shrink-0"></div>
 
                         <!-- Timeframe Toggles -->
                         <div
-                            class="flex items-center gap-1 w-full sm:w-auto bg-background/50 p-1 rounded-lg"
+                            class="flex items-center gap-1 w-full bg-background/50 p-1 rounded-lg"
                         >
                             {#each ["day", "week", "month"] as t}
                                 <button
-                                    class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-semibold rounded-md transition-all {timeframe ===
+                                    class="flex-1 px-2 py-1.5 text-xs font-semibold rounded-md transition-all {timeframe ===
                                     t
                                         ? 'bg-primary text-primary-foreground shadow-sm scale-[1.02]'
                                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'}"
@@ -344,8 +343,10 @@
                         </div>
                     </div>
                 </Card.Header>
-                <Card.Content>
-                    <div class="h-[300px] w-full">
+                <!-- KEY FIX: px-0 on tiny screens, and the inner div uses w-full + min-w-0
+                     so Chart.js receives a container that truly matches viewport width -->
+                <Card.Content class="px-1 xs:px-3 sm:px-6 pb-6 w-full min-w-0">
+                    <div class="h-[200px] xs:h-[220px] sm:h-[300px] w-full min-w-0 relative">
                         <Chart
                             type="line"
                             data={lineChartData}
@@ -357,9 +358,10 @@
                                         position: "top",
                                         align: "end",
                                         labels: {
-                                            boxWidth: 12,
+                                            boxWidth: 10,
                                             usePointStyle: true,
                                             pointStyle: "circle",
+                                            font: { size: 10 },
                                         },
                                     },
                                 },
@@ -367,8 +369,12 @@
                                     y: {
                                         beginAtZero: true,
                                         grid: { display: false },
+                                        ticks: { font: { size: 10 }, maxTicksLimit: 5 },
                                     },
-                                    x: { grid: { display: false } },
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { font: { size: 10 }, maxRotation: 45 },
+                                    },
                                 },
                             }}
                         />
@@ -377,14 +383,14 @@
             </Card.Root>
 
             <!-- Pie Chart: Category Breakdown -->
-            <Card.Root class="shadow-sm border-border/50 overflow-hidden">
-                <Card.Header>
+            <Card.Root class="shadow-sm border-border/50 min-w-0 w-full">
+                <Card.Header class="px-3 sm:px-6">
                     <Card.Title class="text-xl">Category Breakdown</Card.Title>
                     <Card.Description>Top expense categories</Card.Description>
                 </Card.Header>
-                <Card.Content>
+                <Card.Content class="px-1 xs:px-3 sm:px-6 pb-6 w-full min-w-0">
                     <div
-                        class="h-[300px] w-full flex items-center justify-center"
+                        class="h-[200px] xs:h-[220px] sm:h-[300px] w-full min-w-0 relative flex items-center justify-center"
                     >
                         {#if pieChartData.labels.length > 0}
                             <Chart
@@ -397,9 +403,10 @@
                                         legend: {
                                             position: "bottom",
                                             labels: {
-                                                boxWidth: 10,
+                                                boxWidth: 8,
                                                 usePointStyle: true,
-                                                padding: 20,
+                                                padding: 12,
+                                                font: { size: 10 },
                                             },
                                         },
                                     },
@@ -418,23 +425,25 @@
             </Card.Root>
 
             <!-- Recent Transactions -->
-            <Card.Root class="lg:col-span-3 shadow-sm border-border/50">
-                <Card.Header>
+            <!-- KEY FIX: min-w-0 prevents the card from overflowing when TransactionItem
+                 content (long merchant names etc.) sets an implicit min-width -->
+            <Card.Root class="lg:col-span-3 shadow-sm border-border/50 min-w-0 w-full">
+                <Card.Header class="px-3 sm:px-6">
                     <Card.Title class="text-xl">Recent Transactions</Card.Title>
-                    <Card.Description
-                        >Your 5 most recent activities</Card.Description
-                    >
+                    <Card.Description>Your 5 most recent activities</Card.Description>
                 </Card.Header>
-                <Card.Content>
+                <Card.Content class="px-2 sm:px-6">
                     {#if recentTransactions.length === 0}
                         <div class="py-12 text-center text-muted-foreground">
                             No recent transactions found
                         </div>
                     {:else}
-                        <div class="space-y-1">
+                        <div class="space-y-1 w-full min-w-0">
                             {#each recentTransactions as transaction (transaction.id)}
+                                <!-- KEY FIX: overflow-hidden truncates any text that would
+                                     otherwise push the row wider than the card -->
                                 <div
-                                    class="px-2 py-1 rounded-lg hover:bg-muted/30 transition-colors"
+                                    class="px-1 sm:px-2 py-1 rounded-lg hover:bg-muted/30 transition-colors overflow-hidden min-w-0"
                                 >
                                     <TransactionItem {transaction} />
                                 </div>
