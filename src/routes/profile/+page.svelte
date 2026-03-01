@@ -304,25 +304,43 @@
                                     <!-- Custom Categories — shown first, only if any exist -->
                                     {#if customCategories.filter((c) => c.type === type).length > 0}
                                         <div class="space-y-2">
-                                            <p class="text-[10px] uppercase font-bold tracking-widest text-primary/70 pl-1 flex items-center gap-1.5">
-                                                <span class="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+                                            <p
+                                                class="text-[10px] uppercase font-bold tracking-widest text-primary/70 pl-1 flex items-center gap-1.5"
+                                            >
+                                                <span
+                                                    class="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse"
+                                                ></span>
                                                 Custom
                                             </p>
-                                            <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3">
+                                            <div
+                                                class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3"
+                                            >
                                                 {#each customCategories.filter((c) => c.type === type) as cat (cat.id)}
                                                     <div
                                                         class="flex items-center justify-between p-3.5 rounded-xl bg-primary/5 border border-primary/20 shadow-sm group hover:bg-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
                                                     >
-                                                        <div class="flex items-center gap-3 min-w-0">
-                                                            <div class="h-2 w-2 rounded-full bg-primary animate-pulse shrink-0"></div>
-                                                            <span class="text-sm font-bold text-primary truncate">{cat.name}</span>
+                                                        <div
+                                                            class="flex items-center gap-3 min-w-0"
+                                                        >
+                                                            <div
+                                                                class="h-2 w-2 rounded-full bg-primary animate-pulse shrink-0"
+                                                            ></div>
+                                                            <span
+                                                                class="text-sm font-bold text-primary truncate"
+                                                                >{cat.name}</span
+                                                            >
                                                         </div>
                                                         <button
                                                             class="text-expense opacity-0 group-hover:opacity-100 transition-all hover:bg-expense/10 p-1.5 rounded-lg shrink-0 ml-1"
-                                                            onclick={() => handleDeleteCategory(cat.id)}
+                                                            onclick={() =>
+                                                                handleDeleteCategory(
+                                                                    cat.id,
+                                                                )}
                                                             title="Delete Category"
                                                         >
-                                                            <Trash2 class="h-4 w-4" />
+                                                            <Trash2
+                                                                class="h-4 w-4"
+                                                            />
                                                         </button>
                                                     </div>
                                                 {/each}
@@ -330,24 +348,40 @@
                                         </div>
 
                                         <!-- Divider between custom and defaults -->
-                                        <div class="border-t border-border/30"></div>
+                                        <div
+                                            class="border-t border-border/30"
+                                        ></div>
                                     {/if}
 
                                     <!-- Default / Preset Categories — always shown below -->
                                     <div class="space-y-2">
-                                        <p class="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/50 pl-1">
+                                        <p
+                                            class="text-[10px] uppercase font-bold tracking-widest text-muted-foreground/50 pl-1"
+                                        >
                                             Defaults
                                         </p>
-                                        <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        <div
+                                            class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3"
+                                        >
                                             {#each type === "expense" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES as cat}
                                                 <div
                                                     class="flex items-center justify-between p-3.5 rounded-xl bg-muted/40 border border-border/40 group hover:border-border transition-colors"
                                                 >
-                                                    <div class="flex items-center gap-3 min-w-0">
-                                                        <div class="h-2 w-2 rounded-full bg-muted-foreground/30 shrink-0"></div>
-                                                        <span class="text-sm font-medium text-muted-foreground truncate">{cat}</span>
+                                                    <div
+                                                        class="flex items-center gap-3 min-w-0"
+                                                    >
+                                                        <div
+                                                            class="h-2 w-2 rounded-full bg-muted-foreground/30 shrink-0"
+                                                        ></div>
+                                                        <span
+                                                            class="text-sm font-medium text-muted-foreground truncate"
+                                                            >{cat}</span
+                                                        >
                                                     </div>
-                                                    <span class="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-tighter shrink-0 ml-2">Preset</span>
+                                                    <span
+                                                        class="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-tighter shrink-0 ml-2"
+                                                        >Preset</span
+                                                    >
                                                 </div>
                                             {/each}
                                         </div>

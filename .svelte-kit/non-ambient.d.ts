@@ -43,6 +43,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/" | "/auth" | "/budgets" | "/notifications" | "/profile" | "/recurring" | "/settings" | "/transactions";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/apple-touch-icon-180x180.png" | "/favicon.ico" | "/favicon.svg" | "/maskable-icon-512x512.png" | "/placeholder.svg" | "/pwa-192x192.png" | "/pwa-512x512.png" | "/pwa-64x64.png" | "/robots.txt" | string & {};
+		Asset(): "/apple-touch-icon-180x180.png" | "/favicon.png" | "/favicon.svg" | "/maskable-icon-512x512.png" | "/placeholder.svg" | "/pwa-192x192.png" | "/pwa-512x512.png" | "/pwa-64x64.png" | "/robots.txt" | string & {};
 	}
 }
