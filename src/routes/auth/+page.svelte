@@ -26,7 +26,7 @@
                 });
                 if (error) throw error;
                 toast.success("Welcome back!");
-                goto("/");
+                // $layout.svelte handles the redirect reactively once auth state updates
             } else {
                 if (password.length < 6) {
                     toast.error("Password must be at least 6 characters");

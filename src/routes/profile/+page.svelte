@@ -15,8 +15,10 @@
         Tag,
         Info,
         Check,
+        LogOut,
     } from "lucide-svelte";
     import { format } from "date-fns";
+    import { goto } from "$app/navigation";
     import {
         createCategoriesQuery,
         createAddCategoryMutation,
@@ -73,6 +75,11 @@
         } catch (error: any) {
             toast.error(error.message);
         }
+    }
+
+    async function handleSignOut() {
+        await auth.signOut();
+        goto("/auth");
     }
 
     let customCategories = $derived(categoriesQuery.data || []);
@@ -195,6 +202,17 @@
                                 {/if}
                             </Button>
                         </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-border/50">
+                        <Button
+                            variant="destructive"
+                            class="w-full shadow-sm bg-expense/10 text-expense hover:bg-expense/20 hover:text-expense"
+                            onclick={handleSignOut}
+                        >
+                            <LogOut class="mr-2 h-4 w-4" />
+                            Sign Out
+                        </Button>
                     </div>
                 </Card.Content>
             </Card.Root>
