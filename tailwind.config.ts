@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        xs: "471px",
+      },
       fontFamily: {
         sans: ["DM Sans", "sans-serif"],
         display: ["Space Grotesk", "sans-serif"],
