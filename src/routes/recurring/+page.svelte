@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { PageData } from "./$types";
-    export let data: PageData;
+    let { data } = $props();
     import { format, parseISO } from "date-fns";
     import { RefreshCw, Pause, Play, Trash2, Plus } from "lucide-svelte";
     import { Button } from "$lib/components/ui/button";
@@ -12,15 +12,15 @@
         createUpdateRecurringMutation,
         createDeleteRecurringMutation,
     } from "$lib/data";
-    import { preferencesStore } from "$lib/stores/preferences";
+    import { preferencesStore } from "$lib/stores/preferences.svelte";
     import { formatCurrency } from "$lib/formatters";
     import TransactionForm from "$lib/components/TransactionForm.svelte";
-    import { auth } from "$lib/stores/auth";
+    import { auth } from "$lib/stores/auth.svelte";
     import AppLayout from "$lib/components/AppLayout.svelte";
 
     const recurringQuery = createRecurringTransactionsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.recurring,
+        () => auth.user?.id,
+        () => data.preloaded?.recurring,
     );
     const updateRecurring = createUpdateRecurringMutation();
     const deleteRecurring = createDeleteRecurringMutation();
@@ -36,11 +36,13 @@
         updateRecurring.mutate({ id, is_active: !is_active });
     }
 
-    $: rules = recurringQuery.data || data.preloaded?.recurring || [];
-    $: isLoading = recurringQuery.isLoading && rules.length === 0;
+    let rules = $derived(
+        recurringQuery.data || data.preloaded?.recurring || [],
+    );
+    let isLoading = $derived(recurringQuery.isLoading && rules.length === 0);
 
-    $: active = rules.filter((r) => r.is_active);
-    $: paused = rules.filter((r) => !r.is_active);
+    let active = $derived(rules.filter((r) => r.is_active));
+    let paused = $derived(rules.filter((r) => !r.is_active));
 </script>
 
 <AppLayout>
@@ -154,7 +156,7 @@
                                                             ? "−"
                                                             : "+"}{formatCurrency(
                                                             rule.amount,
-                                                            $preferencesStore,
+                                                            preferencesStore,
                                                         )}
                                                     </p>
                                                     <div
@@ -331,7 +333,7 @@
                                                             ? "−"
                                                             : "+"}{formatCurrency(
                                                             rule.amount,
-                                                            $preferencesStore,
+                                                            preferencesStore,
                                                         )}
                                                     </p>
                                                     <div

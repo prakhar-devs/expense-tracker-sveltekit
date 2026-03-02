@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { fade, scale } from "svelte/transition";
     import { Lock, Fingerprint, Delete } from "lucide-svelte";
-    import { preferencesStore } from "$lib/stores/preferences";
+    import { preferencesStore } from "$lib/stores/preferences.svelte";
     import { verifyBiometrics } from "$lib/biometrics";
     import { cn } from "$lib/utils";
 
@@ -12,8 +12,8 @@
     let error = $state(false);
     let verifying = $state(false);
 
-    const storedPin = $preferencesStore.appLockPin;
-    const isBiometricsEnabled = $preferencesStore.biometricsEnabled;
+    const storedPin = $derived(preferencesStore.appLockPin);
+    const isBiometricsEnabled = $derived(preferencesStore.biometricsEnabled);
     // If we stored the credential ID in local storage when enabling biometrics, we'd retrieve it.
     // We'll store it directly in localStorage as 'webauthn-credential'
     let credentialId = "";

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from "$app/stores";
+    import { page } from "$app/state";
     import { ShieldAlert, Home, ArrowLeft } from "lucide-svelte";
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
@@ -17,11 +17,11 @@
             </div>
 
             <h1 class="font-display text-4xl font-bold text-foreground mb-2">
-                {$page.status}
+                {page.status}
             </h1>
 
             <h2 class="text-xl font-semibold text-foreground mb-4">
-                {#if $page.status === 404}
+                {#if page.status === 404}
                     Page not found
                 {:else}
                     Something went wrong
@@ -29,7 +29,7 @@
             </h2>
 
             <p class="text-muted-foreground mb-8">
-                {$page.error?.message ||
+                {page.error?.message ||
                     "We encountered an unexpected problem. Please try again later or return to safety."}
             </p>
 

@@ -1,7 +1,6 @@
-import { writable, get } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { UserPreferences } from '$lib/constants';
-import { auth } from '$lib/stores/auth';
+import { auth } from '$lib/stores/auth.svelte';
 import { supabase } from '$lib/supabaseClient';
 
 const DEFAULT_PREFERENCES: UserPreferences = {
@@ -17,19 +16,28 @@ const DEFAULT_PREFERENCES: UserPreferences = {
     biometricsEnabled: false,
 };
 
-function createPreferencesStore() {
-    const initial: UserPreferences = browser
+class PreferencesStore {
+    state = $state<UserPreferences>(browser
         ? (() => {
             try {
                 const saved = localStorage.getItem('user-preferences');
                 return saved ? JSON.parse(saved) : DEFAULT_PREFERENCES;
             } catch { return DEFAULT_PREFERENCES; }
         })()
-        : DEFAULT_PREFERENCES;
+        : DEFAULT_PREFERENCES);
 
-    const { subscribe, set, update } = writable<UserPreferences>(initial);
+    get theme() { return this.state.theme; }
+    get accentColor() { return this.state.accentColor; }
+    get density() { return this.state.density; }
+    get currency() { return this.state.currency; }
+    get firstDayOfWeek() { return this.state.firstDayOfWeek; }
+    get sidebarCollapsed() { return this.state.sidebarCollapsed; }
+    get showAnimations() { return this.state.showAnimations; }
+    get appLockEnabled() { return this.state.appLockEnabled; }
+    get appLockPin() { return this.state.appLockPin; }
+    get biometricsEnabled() { return this.state.biometricsEnabled; }
 
-    function applyToDOM(prefs: UserPreferences) {
+    applyToDOM(prefs: UserPreferences) {
         if (!browser) return;
         const root = document.documentElement;
 
@@ -61,34 +69,29 @@ function createPreferencesStore() {
         localStorage.setItem('user-preferences', JSON.stringify(prefs));
     }
 
-    async function syncToDatabase(prefs: UserPreferences) {
+    async syncToDatabase(prefs: UserPreferences) {
         if (!browser) return;
-        const user = get(auth).user;
+        const user = auth.user;
         if (!user) return;
-        // Fire and forget
         supabase.from('profiles').update({ preferences: prefs }).eq('user_id', user.id).then();
     }
 
-    function setPreferences(prefs: UserPreferences, sync = true) {
-        set(prefs);
-        applyToDOM(prefs);
-        if (sync) syncToDatabase(prefs);
+    setPreferences(prefs: UserPreferences, sync = true) {
+        this.state = prefs;
+        this.applyToDOM(prefs);
+        if (sync) this.syncToDatabase(prefs);
     }
 
-    function mergePreferences(patch: Partial<UserPreferences>, sync = true) {
-        update(current => {
-            const next = { ...current, ...patch };
-            applyToDOM(next);
-            if (sync) syncToDatabase(next);
-            return next;
-        });
+    mergePreferences(patch: Partial<UserPreferences>, sync = true) {
+        const next = { ...this.state, ...patch };
+        this.state = next;
+        this.applyToDOM(next);
+        if (sync) this.syncToDatabase(next);
     }
 
-    function initApply() {
-        applyToDOM(get({ subscribe }));
+    initApply() {
+        this.applyToDOM(this.state);
     }
-
-    return { subscribe, setPreferences, mergePreferences, initApply };
 }
 
-export const preferencesStore = createPreferencesStore();
+export const preferencesStore = new PreferencesStore();

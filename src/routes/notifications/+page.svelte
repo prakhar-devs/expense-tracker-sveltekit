@@ -15,7 +15,7 @@
         createTransactionsQuery,
         createRecurringTransactionsQuery,
     } from "$lib/data";
-    import { auth } from "$lib/stores/auth";
+    import { auth } from "$lib/stores/auth.svelte";
     import {
         format,
         isAfter,
@@ -26,22 +26,22 @@
         endOfDay,
     } from "date-fns";
     import { formatCurrency } from "$lib/formatters";
-    import { preferencesStore } from "$lib/stores/preferences";
+    import { preferencesStore } from "$lib/stores/preferences.svelte";
     import { cn } from "$lib/utils";
 
     let { data } = $props();
 
     const budgetsQuery = createBudgetsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.budgets,
+        () => auth.user?.id,
+        () => data.preloaded?.budgets,
     );
     const transactionsQuery = createTransactionsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.transactions,
+        () => auth.user?.id,
+        () => data.preloaded?.transactions,
     );
     const recurringQuery = createRecurringTransactionsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.recurring,
+        () => auth.user?.id,
+        () => data.preloaded?.recurring,
     );
 
     let budgets = $derived(budgetsQuery.data || []);
@@ -84,7 +84,7 @@
                     id: `budget-crit-${budget.id}`,
                     type: "critical",
                     title: "Budget Exceeded!",
-                    message: `You've spent ${formatCurrency(spent, $preferencesStore)} in ${budget.category}, exceeding your ${formatCurrency(budget.budget_amount, $preferencesStore)} limit.`,
+                    message: `You've spent ${formatCurrency(spent, preferencesStore)} in ${budget.category}, exceeding your ${formatCurrency(budget.budget_amount, preferencesStore)} limit.`,
                     date: new Date().toISOString(),
                     icon: AlertCircle,
                     href: "/budgets",
@@ -94,7 +94,7 @@
                     id: `budget-warn-${budget.id}`,
                     type: "warning",
                     title: "Approaching Budget Limit",
-                    message: `You've used ${progress.toFixed(0)}% of your ${formatCurrency(budget.budget_amount, $preferencesStore)} budget for ${budget.category}.`,
+                    message: `You've used ${progress.toFixed(0)}% of your ${formatCurrency(budget.budget_amount, preferencesStore)} budget for ${budget.category}.`,
                     date: new Date().toISOString(),
                     icon: AlertTriangle,
                     href: "/budgets",
@@ -115,7 +115,7 @@
                     id: `recur-${rec.id}`,
                     type: "reminder",
                     title: "Upcoming Payment",
-                    message: `Your recurring payment for ${rec.category} (${formatCurrency(rec.amount, $preferencesStore)}) is due on ${format(nextDate, "MMM do")}.`,
+                    message: `Your recurring payment for ${rec.category} (${formatCurrency(rec.amount, preferencesStore)}) is due on ${format(nextDate, "MMM do")}.`,
                     date: rec.next_run_date,
                     icon: CalendarIcon,
                     href: "/recurring",

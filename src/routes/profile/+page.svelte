@@ -5,7 +5,7 @@
     import { Label } from "$lib/components/ui/label";
     import * as Card from "$lib/components/ui/card";
     import * as Tabs from "$lib/components/ui/tabs";
-    import { auth } from "$lib/stores/auth";
+    import { auth } from "$lib/stores/auth.svelte";
     import {
         User,
         Mail,
@@ -31,13 +31,13 @@
 
     let { data } = $props();
 
-    const categoriesQuery = createCategoriesQuery(() => $auth.user?.id);
+    const categoriesQuery = createCategoriesQuery(() => auth.user?.id);
     const addCategory = createAddCategoryMutation();
     const deleteCategory = createDeleteCategoryMutation();
     const updateProfile = createUpdateProfileMutation();
 
     let profile = $derived(data.preloaded?.profile);
-    let user = $derived($auth.user);
+    let user = $derived(auth.user);
 
     let newCategoryName = $state("");
     let fullName = $state(profile?.full_name || "");

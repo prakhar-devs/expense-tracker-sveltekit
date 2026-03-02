@@ -28,7 +28,7 @@
         createAddRecurringMutation,
     } from "$lib/data";
     import { toast } from "svelte-sonner";
-    import { auth } from "$lib/stores/auth";
+    import { auth } from "$lib/stores/auth.svelte";
 
     let {
         transaction = undefined,
@@ -45,7 +45,7 @@
     const addTx = createAddTransactionMutation();
     const updateTx = createUpdateTransactionMutation();
     const addRecurring = createAddRecurringMutation();
-    const categoriesQuery = createCategoriesQuery(() => $auth.user?.id);
+    const categoriesQuery = createCategoriesQuery(() => auth.user?.id);
 
     let isMobile = $state(false);
     onMount(() => {

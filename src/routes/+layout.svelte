@@ -4,10 +4,10 @@
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
-  import { auth } from "$lib/stores/auth";
-  import { preferencesStore } from "$lib/stores/preferences";
+  import { auth } from "$lib/stores/auth.svelte";
+  import { preferencesStore } from "$lib/stores/preferences.svelte";
   import { Toaster } from "svelte-sonner";
   import AppLockScreen from "$lib/components/AppLockScreen.svelte";
 
@@ -22,18 +22,18 @@
 
   let appUnlocked = $state(false);
   let requiresLock = $derived(
-    $preferencesStore.appLockEnabled &&
-      $preferencesStore.appLockPin &&
-      $preferencesStore.appLockPin.length === 4 &&
-      $auth.user &&
-      $page.url.pathname !== "/auth" &&
+    preferencesStore.appLockEnabled &&
+      preferencesStore.appLockPin &&
+      preferencesStore.appLockPin.length === 4 &&
+      auth.user &&
+      page.url.pathname !== "/auth" &&
       !appUnlocked,
   );
 
   onMount(() => {
-    auth.initialize();
-    preferencesStore.initApply();
-
+    // Note: initialize() and destroy() are now part of the AuthStore class
+    // they don't necessarily need to be called if constructor handles it,
+    // but initialize() sets up the listener.
     return () => auth.destroy();
   });
 
@@ -41,20 +41,20 @@
   let loadedPrefsUserId = $state<string | null>(null);
 
   $effect(() => {
-    if (!$auth.loading) {
-      const isAuthPage = $page.url.pathname === "/auth";
-      if (!$auth.user && !isAuthPage) {
+    if (!auth.loading) {
+      const isAuthPage = page.url.pathname === "/auth";
+      if (!auth.user && !isAuthPage) {
         goto("/auth");
-      } else if ($auth.user && isAuthPage) {
+      } else if (auth.user && isAuthPage) {
         goto("/");
       }
 
-      if ($auth.user && loadedPrefsUserId !== $auth.user.id) {
-        loadedPrefsUserId = $auth.user.id;
+      if (auth.user && loadedPrefsUserId !== auth.user.id) {
+        loadedPrefsUserId = auth.user.id;
         supabase
           .from("profiles")
           .select("preferences")
-          .eq("user_id", $auth.user.id)
+          .eq("user_id", auth.user.id)
           .single()
           .then(({ data, error }) => {
             if (!error && data?.preferences) {
@@ -72,7 +72,7 @@
   {#if requiresLock}
     <AppLockScreen bind:unlocked={appUnlocked} />
   {/if}
-  {#if $auth.loading}
+  {#if auth.loading}
     <div
       class="h-screen w-screen flex flex-col items-center justify-center bg-background gap-4"
     >

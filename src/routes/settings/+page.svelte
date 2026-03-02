@@ -17,7 +17,7 @@
     import { Button } from "$lib/components/ui/button";
     import { Switch } from "$lib/components/ui/switch";
     import * as Select from "$lib/components/ui/select";
-    import { preferencesStore } from "$lib/stores/preferences";
+    import { preferencesStore } from "$lib/stores/preferences.svelte";
     import { cn } from "$lib/utils";
     import { toast } from "svelte-sonner";
     import AppLayout from "$lib/components/AppLayout.svelte";
@@ -45,11 +45,11 @@
         { id: "system", label: "System", icon: Monitor },
     ];
 
-    let customColor = $preferencesStore.accentColor;
-    let currency = $derived($preferencesStore.currency);
-    let firstDayOfWeek = $derived($preferencesStore.firstDayOfWeek);
+    let customColor = $state(preferencesStore.accentColor);
+    let currency = $derived(preferencesStore.currency);
+    let firstDayOfWeek = $derived(preferencesStore.firstDayOfWeek);
 
-    let pinInput = $state($preferencesStore.appLockPin);
+    let pinInput = $state(preferencesStore.appLockPin);
     let biometricsAvailable = $state(false);
 
     onMount(async () => {
@@ -109,17 +109,14 @@
                         <div class="grid grid-cols-3 gap-3">
                             {#each themes as t}
                                 <Button
-                                    variant={$preferencesStore.theme === t.id
+                                    variant={preferencesStore.theme === t.id
                                         ? "default"
                                         : "outline"}
                                     class="flex flex-col items-center gap-2 h-20"
                                     onclick={() =>
                                         handleUpdate({ theme: t.id })}
                                 >
-                                    <svelte:component
-                                        this={t.icon}
-                                        class="h-5 w-5"
-                                    />
+                                    <t.icon class="h-5 w-5 mb-2" />
                                     <span class="text-xs">{t.label}</span>
                                 </Button>
                             {/each}
@@ -133,7 +130,7 @@
                                 <button
                                     class={cn(
                                         "h-8 w-8 rounded-full border-2 transition-transform hover:scale-110 flex items-center justify-center",
-                                        $preferencesStore.accentColor ===
+                                        preferencesStore.accentColor ===
                                             color.value
                                             ? "border-foreground scale-110 shadow-lg"
                                             : "border-transparent",
@@ -144,7 +141,7 @@
                                             accentColor: color.value,
                                         })}
                                 >
-                                    {#if $preferencesStore.accentColor === color.value}
+                                    {#if preferencesStore.accentColor === color.value}
                                         <Check
                                             class="h-4 w-4 text-white drop-shadow-md"
                                         />
@@ -190,7 +187,7 @@
                             </p>
                         </div>
                         <Switch
-                            checked={$preferencesStore.density === "compact"}
+                            checked={preferencesStore.density === "compact"}
                             onCheckedChange={(checked) =>
                                 handleUpdate({
                                     density: checked
@@ -208,7 +205,7 @@
                             </p>
                         </div>
                         <Switch
-                            checked={$preferencesStore.sidebarCollapsed}
+                            checked={preferencesStore.sidebarCollapsed}
                             onCheckedChange={(checked) =>
                                 handleUpdate({ sidebarCollapsed: checked })}
                         />
@@ -222,7 +219,7 @@
                             </p>
                         </div>
                         <Switch
-                            checked={$preferencesStore.showAnimations}
+                            checked={preferencesStore.showAnimations}
                             onCheckedChange={(checked) =>
                                 handleUpdate({ showAnimations: checked })}
                         />
@@ -296,7 +293,7 @@
                             </p>
                         </div>
                         <Switch
-                            checked={$preferencesStore.appLockEnabled}
+                            checked={preferencesStore.appLockEnabled}
                             onCheckedChange={(checked) => {
                                 handleUpdate({ appLockEnabled: checked });
                                 if (!checked) {
@@ -310,7 +307,7 @@
                         />
                     </div>
 
-                    {#if $preferencesStore.appLockEnabled}
+                    {#if preferencesStore.appLockEnabled}
                         <div
                             class="space-y-3 animate-in fade-in slide-in-from-top-2"
                         >
@@ -355,7 +352,7 @@
                                     </p>
                                 </div>
                                 <Switch
-                                    checked={$preferencesStore.biometricsEnabled}
+                                    checked={preferencesStore.biometricsEnabled}
                                     onCheckedChange={handleBiometricToggle}
                                 />
                             </div>

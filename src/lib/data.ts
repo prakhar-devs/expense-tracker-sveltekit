@@ -1,22 +1,21 @@
 import { createQuery, createMutation, useQueryClient } from '@tanstack/svelte-query';
 import { supabase } from '$lib/supabaseClient';
 import type { Transaction, Category, Profile, RecurringTransaction, Budget, BudgetStatus } from '$lib/constants';
-import { auth } from '$lib/stores/auth';
 import { format, subMonths } from 'date-fns';
-import { derived } from 'svelte/store';
+
 import { queueOfflineMutation } from '$lib/syncEngine';
 
 export const PAGE_SIZE = 20;
 
-import { get } from 'svelte/store';
+import { auth } from '$lib/stores/auth.svelte';
 
 function getUserId() {
-    return get(auth).user?.id;
+    return auth.user?.id;
 }
 
 // ─── Transactions ───────────────────────────────────────────────────
 
-export function createTransactionsQuery(getUserId: () => string | undefined, initialData?: Transaction[]) {
+export function createTransactionsQuery(getUserId: () => string | undefined, getInitialData?: () => Transaction[] | undefined) {
     return createQuery(() => {
         const userId = getUserId();
         return {
@@ -33,7 +32,7 @@ export function createTransactionsQuery(getUserId: () => string | undefined, ini
                 return data as Transaction[];
             },
             enabled: !!userId,
-            initialData,
+            initialData: getInitialData?.(),
         }
     });
 }
@@ -244,7 +243,7 @@ export function createDeleteTransactionMutation() {
 
 // ─── Categories ──────────────────────────────────────────────────────
 
-export function createCategoriesQuery(getUserId: () => string | undefined, initialData?: Category[]) {
+export function createCategoriesQuery(getUserId: () => string | undefined, getInitialData?: () => Category[] | undefined) {
     return createQuery(() => {
         const userId = getUserId();
         return {
@@ -255,6 +254,7 @@ export function createCategoriesQuery(getUserId: () => string | undefined, initi
                 return data as Category[];
             },
             enabled: !!userId,
+            initialData: getInitialData?.(),
         };
     });
 }
@@ -285,7 +285,7 @@ export function createDeleteCategoryMutation() {
 
 // ─── Profile ─────────────────────────────────────────────────────────
 
-export function createProfileQuery(getUserId: () => string | undefined, initialData?: Profile | null) {
+export function createProfileQuery(getUserId: () => string | undefined, getInitialData?: () => Profile | null | undefined) {
     return createQuery(() => {
         const userId = getUserId();
         return {
@@ -296,6 +296,7 @@ export function createProfileQuery(getUserId: () => string | undefined, initialD
                 return data as Profile;
             },
             enabled: !!userId,
+            initialData: getInitialData?.(),
         };
     });
 }
@@ -315,7 +316,7 @@ export function createUpdateProfileMutation() {
 
 // ─── Recurring Transactions ──────────────────────────────────────────
 
-export function createRecurringTransactionsQuery(getUserId: () => string | undefined, initialData?: RecurringTransaction[]) {
+export function createRecurringTransactionsQuery(getUserId: () => string | undefined, getInitialData?: () => RecurringTransaction[] | undefined) {
     return createQuery(() => {
         const userId = getUserId();
         return {
@@ -326,6 +327,7 @@ export function createRecurringTransactionsQuery(getUserId: () => string | undef
                 return data as RecurringTransaction[];
             },
             enabled: !!userId,
+            initialData: getInitialData?.(),
         };
     });
 }
@@ -368,7 +370,7 @@ export function createDeleteRecurringMutation() {
 
 // ─── Budgets ─────────────────────────────────────────────────────────
 
-export function createBudgetsQuery(getUserId: () => string | undefined, initialData?: Budget[]) {
+export function createBudgetsQuery(getUserId: () => string | undefined, getInitialData?: () => Budget[] | undefined) {
     return createQuery(() => {
         const userId = getUserId();
         return {
@@ -379,6 +381,7 @@ export function createBudgetsQuery(getUserId: () => string | undefined, initialD
                 return data as Budget[];
             },
             enabled: !!userId,
+            initialData: getInitialData?.(),
         };
     });
 }

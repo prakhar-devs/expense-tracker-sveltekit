@@ -2,22 +2,22 @@
     import AppLayout from "$lib/components/AppLayout.svelte";
     import * as Card from "$lib/components/ui/card";
     import { formatCurrency } from "$lib/formatters";
-    import { preferencesStore } from "$lib/stores/preferences";
+    import { preferencesStore } from "$lib/stores/preferences.svelte";
     import { Button } from "$lib/components/ui/button";
     import { Progress } from "$lib/components/ui/progress";
     import { Plus } from "lucide-svelte";
     import { createBudgetsQuery, createTransactionsQuery } from "$lib/data";
-    import { auth } from "$lib/stores/auth";
+    import { auth } from "$lib/stores/auth.svelte";
 
     let { data } = $props();
 
     const budgetsQuery = createBudgetsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.budgets,
+        () => auth.user?.id,
+        () => data.preloaded?.budgets,
     );
     const transactionsQuery = createTransactionsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.transactions,
+        () => auth.user?.id,
+        () => data.preloaded?.transactions,
     );
 
     let budgets = $derived(budgetsQuery.data || []);
@@ -118,7 +118,7 @@
                                         >
                                             {formatCurrency(
                                                 budget.spent,
-                                                $preferencesStore,
+                                                preferencesStore,
                                             )}
                                         </span>
                                     </div>
@@ -140,7 +140,7 @@
                                         <span
                                             >of {formatCurrency(
                                                 budget.budget_amount,
-                                                $preferencesStore,
+                                                preferencesStore,
                                             )}</span
                                         >
                                     </div>
@@ -161,7 +161,7 @@
                                 >
                                     {formatCurrency(
                                         budget.remaining,
-                                        $preferencesStore,
+                                        preferencesStore,
                                     )}
                                 </span>
                             </div>

@@ -24,7 +24,7 @@
     import * as Popover from "$lib/components/ui/popover";
     import { Calendar } from "$lib/components/ui/calendar";
     import { Input } from "$lib/components/ui/input";
-    import { auth } from "$lib/stores/auth";
+    import { auth } from "$lib/stores/auth.svelte";
     import { cn } from "$lib/utils";
     import { format } from "date-fns";
     import { CalendarDate, getLocalTimeZone } from "@internationalized/date";
@@ -65,7 +65,7 @@
 
     // Use the paginated query hook
     const query = createTransactionsPagedQuery(
-        () => $auth.user?.id,
+        () => auth.user?.id,
         () => page,
         () => ({
             search: searchTerm || undefined,
@@ -98,7 +98,7 @@
     }
 
     async function handleDownloadCSV() {
-        if (!$auth.user?.id) return;
+        if (!auth.user?.id) return;
 
         try {
             toast.loading("Preparing CSV report...");
@@ -111,7 +111,7 @@
             };
 
             const allTransactions = await fetchFilteredTransactions(
-                $auth.user.id,
+                auth.user.id,
                 filters,
             );
 
@@ -166,7 +166,7 @@
     }
 
     async function handleDownloadPDF() {
-        if (!$auth.user?.id) return;
+        if (!auth.user?.id) return;
 
         try {
             toast.loading("Preparing PDF report...");
@@ -179,7 +179,7 @@
             };
 
             const allTransactions = await fetchFilteredTransactions(
-                $auth.user.id,
+                auth.user.id,
                 filters,
             );
 

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import { goto } from "$app/navigation";
   import { cn } from "$lib/utils";
-  import { auth } from "$lib/stores/auth";
-  import { preferencesStore } from "$lib/stores/preferences";
+  import { auth } from "$lib/stores/auth.svelte";
+  import { preferencesStore } from "$lib/stores/preferences.svelte";
   import {
     LayoutDashboard,
     ArrowLeftRight,
@@ -43,7 +43,7 @@
 
   let isMobile = $state(false);
   let txFormOpen = $state(false);
-  let sidebarCollapsed = $state($preferencesStore.sidebarCollapsed);
+  let sidebarCollapsed = $state(preferencesStore.sidebarCollapsed);
 
   onMount(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -55,7 +55,7 @@
     return () => mq.removeEventListener("change", handler);
   });
 
-  let pathname = $derived($page.url.pathname);
+  let pathname = $derived(page.url.pathname);
 
   function toggleSidebar() {
     sidebarCollapsed = !sidebarCollapsed;
@@ -75,12 +75,12 @@
   } from "$lib/data";
   import { addDays, isAfter, isBefore, parseISO, startOfDay } from "date-fns";
 
-  const budgetsQuery = createBudgetsQuery(() => $auth.user?.id);
-  const transactionsQuery = createTransactionsQuery(() => $auth.user?.id);
-  const recurringQuery = createRecurringTransactionsQuery(() => $auth.user?.id);
+  const budgetsQuery = createBudgetsQuery(() => auth.user?.id);
+  const transactionsQuery = createTransactionsQuery(() => auth.user?.id);
+  const recurringQuery = createRecurringTransactionsQuery(() => auth.user?.id);
 
   let notificationsCount = $derived.by(() => {
-    const userId = $auth.user?.id;
+    const userId = auth.user?.id;
     if (!userId) return 0;
 
     const budgets = budgetsQuery.data || [];
@@ -196,7 +196,7 @@
       >
         {#if !sidebarCollapsed}
           <p class="mb-2 truncate text-xs text-sidebar-foreground/60">
-            {$auth.user?.email}
+            {auth.user?.email}
           </p>
         {/if}
         <button

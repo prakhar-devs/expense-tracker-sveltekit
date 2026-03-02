@@ -2,14 +2,13 @@
     import AppLayout from "$lib/components/AppLayout.svelte";
     import * as Card from "$lib/components/ui/card";
     import TransactionItem from "$lib/components/TransactionItem.svelte";
-    import { formatCurrency } from "$lib/formatters";
-    import { preferencesStore } from "$lib/stores/preferences";
     import TransactionForm from "$lib/components/TransactionForm.svelte";
     import { Button } from "$lib/components/ui/button";
     import { Plus } from "lucide-svelte";
-
     import { createTransactionsQuery, createBudgetsQuery } from "$lib/data";
-    import { auth } from "$lib/stores/auth";
+    import { auth } from "$lib/stores/auth.svelte";
+    import { preferencesStore } from "$lib/stores/preferences.svelte";
+    import { formatCurrency } from "$lib/formatters";
     import Chart from "$lib/components/ui/chart.svelte";
     import {
         startOfDay,
@@ -24,7 +23,7 @@
         isSameMonth,
         parseISO,
     } from "date-fns";
-    import { page } from "$app/stores";
+    import { page } from "$app/state";
     import { browser } from "$app/environment";
 
     let { data } = $props();
@@ -35,25 +34,25 @@
 
     $effect(() => {
         if (!browser) return;
-        const action = $page.url.searchParams.get("action");
+        const action = page.url.searchParams.get("action");
         if (action === "add_expense" || action === "add_income") {
             initialType = action === "add_expense" ? "expense" : "income";
             txFormOpen = true;
 
             // Clean up the URL
-            const url = new URL($page.url);
+            const url = new URL(page.url);
             url.searchParams.delete("action");
             history.replaceState({}, "", url);
         }
     });
 
     const transactionsQuery = createTransactionsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.transactions,
+        () => auth.user?.id,
+        () => data.preloaded?.transactions,
     );
     const budgetsQuery = createBudgetsQuery(
-        () => $auth.user?.id,
-        data.preloaded?.budgets,
+        () => auth.user?.id,
+        () => data.preloaded?.budgets,
     );
 
     let transactions = $derived(transactionsQuery.data || []);
@@ -195,7 +194,9 @@
     <!-- KEY FIX: min-w-0 + overflow-hidden on the root container prevents children from
          blowing out the layout on narrow viewports. w-full alone isn't enough because
          flex/grid children can still set an implicit minimum width. -->
-    <div class="flex flex-col gap-6 animate-fade-in w-full min-w-0 overflow-hidden">
+    <div
+        class="flex flex-col gap-6 animate-fade-in w-full min-w-0 overflow-hidden"
+    >
         <div
             class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
@@ -238,7 +239,7 @@
                                 ? 'text-foreground'
                                 : 'text-expense'}"
                         >
-                            {formatCurrency(balance, $preferencesStore)}
+                            {formatCurrency(balance, preferencesStore)}
                         </div>
                     </div>
                 </Card.Content>
@@ -254,7 +255,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="text-2xl font-bold text-income">
-                            +{formatCurrency(totalIncome, $preferencesStore)}
+                            +{formatCurrency(totalIncome, preferencesStore)}
                         </div>
                     </div>
                 </Card.Content>
@@ -270,7 +271,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="text-2xl font-bold text-expense">
-                            -{formatCurrency(totalExpenses, $preferencesStore)}
+                            -{formatCurrency(totalExpenses, preferencesStore)}
                         </div>
                     </div>
                 </Card.Content>
@@ -280,13 +281,18 @@
         <div class="grid gap-6 lg:grid-cols-3 w-full min-w-0">
             <!-- Line Chart: Financial Trends -->
             <!-- KEY FIX: min-w-0 on the card prevents the card itself from overflowing its grid cell -->
-            <Card.Root class="lg:col-span-2 shadow-sm border-border/50 min-w-0 w-full">
+            <Card.Root
+                class="lg:col-span-2 shadow-sm border-border/50 min-w-0 w-full"
+            >
                 <Card.Header
                     class="flex flex-col items-start pb-4 gap-4 px-3 sm:px-6"
                 >
                     <div class="space-y-1 w-full">
-                        <Card.Title class="text-xl">Financial Trends</Card.Title>
-                        <Card.Description>Income vs Expenses over time</Card.Description>
+                        <Card.Title class="text-xl">Financial Trends</Card.Title
+                        >
+                        <Card.Description
+                            >Income vs Expenses over time</Card.Description
+                        >
                     </div>
                     <!-- KEY FIX: The controls row was a horizontal flex that forced width on tiny screens.
                          We now keep it fully column-stacked below sm, with w-full on every child. -->
@@ -323,7 +329,9 @@
                             />
                         </div>
 
-                        <div class="hidden sm:block w-px h-6 bg-border/40 shrink-0"></div>
+                        <div
+                            class="hidden sm:block w-px h-6 bg-border/40 shrink-0"
+                        ></div>
 
                         <!-- Timeframe Toggles -->
                         <div
@@ -346,7 +354,9 @@
                 <!-- KEY FIX: px-0 on tiny screens, and the inner div uses w-full + min-w-0
                      so Chart.js receives a container that truly matches viewport width -->
                 <Card.Content class="px-1 xs:px-3 sm:px-6 pb-6 w-full min-w-0">
-                    <div class="h-[200px] xs:h-[220px] sm:h-[300px] w-full min-w-0 relative">
+                    <div
+                        class="h-[200px] xs:h-[220px] sm:h-[300px] w-full min-w-0 relative"
+                    >
                         <Chart
                             type="line"
                             data={lineChartData}
@@ -369,11 +379,17 @@
                                     y: {
                                         beginAtZero: true,
                                         grid: { display: false },
-                                        ticks: { font: { size: 10 }, maxTicksLimit: 5 },
+                                        ticks: {
+                                            font: { size: 10 },
+                                            maxTicksLimit: 5,
+                                        },
                                     },
                                     x: {
                                         grid: { display: false },
-                                        ticks: { font: { size: 10 }, maxRotation: 45 },
+                                        ticks: {
+                                            font: { size: 10 },
+                                            maxRotation: 45,
+                                        },
                                     },
                                 },
                             }}
@@ -427,10 +443,14 @@
             <!-- Recent Transactions -->
             <!-- KEY FIX: min-w-0 prevents the card from overflowing when TransactionItem
                  content (long merchant names etc.) sets an implicit min-width -->
-            <Card.Root class="lg:col-span-3 shadow-sm border-border/50 min-w-0 w-full">
+            <Card.Root
+                class="lg:col-span-3 shadow-sm border-border/50 min-w-0 w-full"
+            >
                 <Card.Header class="px-3 sm:px-6">
                     <Card.Title class="text-xl">Recent Transactions</Card.Title>
-                    <Card.Description>Your 5 most recent activities</Card.Description>
+                    <Card.Description
+                        >Your 5 most recent activities</Card.Description
+                    >
                 </Card.Header>
                 <Card.Content class="px-2 sm:px-6">
                     {#if recentTransactions.length === 0}

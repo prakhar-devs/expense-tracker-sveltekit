@@ -5,7 +5,7 @@
   import { Button } from "$lib/components/ui/button";
   import { createDeleteTransactionMutation } from "$lib/data";
   import { formatCurrency, formatDate } from "$lib/formatters";
-  import { preferencesStore } from "$lib/stores/preferences";
+  import { preferencesStore } from "$lib/stores/preferences.svelte";
   import TransactionForm from "./TransactionForm.svelte";
   import { toast } from "svelte-sonner";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
@@ -83,7 +83,7 @@
     >
       {isIncome ? "+" : "-"}{formatCurrency(
         Number(transaction.amount),
-        $preferencesStore,
+        preferencesStore,
       )}
     </p>
     <p class="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">
@@ -125,7 +125,7 @@
             <AlertDialog.Description>
               This will permanently remove this {transaction.type} of {formatCurrency(
                 Number(transaction.amount),
-                $preferencesStore,
+                preferencesStore,
               )}.
             </AlertDialog.Description>
           </AlertDialog.Header>
